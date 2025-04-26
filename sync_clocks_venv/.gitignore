@@ -4,7 +4,7 @@
 /share
 CACHEDIR.TAG
 pyvenv.cfg
-/synchronous_clock/pass.env
+/synchronous_clock/synchronous_clock/.env
 
 # Ignore migrations folder in all apps
 **/migrations/*

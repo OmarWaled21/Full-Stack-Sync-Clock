@@ -36,6 +36,12 @@ class UserLoginView(APIView):
             else:
                 return Response({"message": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    
+class getUserToken(APIView):
+    def get(self, request):
+        token = Token.objects.get(user=request.user)
+        return Response({"token": token.key}, status=status.HTTP_200_OK)
 
 
 class UserLogoutView(APIView):
@@ -78,4 +84,6 @@ class PasswordResetConfirmView(APIView):
                 return Response({"message": "Invalid token."}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        
+        
         

@@ -8,5 +8,5 @@ urlpatterns = [
     path('password_reset/', api_views.PasswordResetView.as_view(), name='api_password_reset'),
     path('password_reset_confirm/<uidb64>/<token>/', api_views.PasswordResetConfirmView.as_view(), name='api_password_reset_confirm'),
     
-    path('token/', obtain_auth_token, name='api_token_auth'),
+    path('token/', api_views.getUserToken.as_view(), name='api_token_auth'),
 ]
