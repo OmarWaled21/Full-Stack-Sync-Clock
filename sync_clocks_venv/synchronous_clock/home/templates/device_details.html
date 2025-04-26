@@ -1,0 +1,142 @@
+{% extends 'base_home.html' %}
+
+{% block content %}
+
+<div class="container mt-5" style="max-width: 600px">
+  <h2>Device Details</h2>
+
+  <div class="card mt-4">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+            <h4 class="card-title mb-0">{{ device.name }}</h4>
+            
+            {% if user.rule != 'user' %}
+            <div class="d-flex">
+                <div class="mt-1 text-center">
+                    <a href="{% url 'logs_view' %}?device_id={{ device.id }}" class="btn text-danger border-0 font-weight-bold">
+                      <strong>Logs</strong>
+                    </a>
+                </div>
+                
+                {% if user.rule == 'admin' %}
+                <div class="mt-1 text-center ml-2">
+                    <a href="{% url 'edit_device' device.id %}" class="btn text-primary border-0 font-weight-bold">
+                      <strong>Edit</strong>
+                    </a>
+                </div>
+                {% endif %}
+                    
+            </div>
+            {% endif %}
+                
+        </div>
+      <table class="table table-bordered mt-3">
+        <tbody>
+            <tr>
+                <th>Status</th>
+                <td class="status"></td>
+            </tr>
+            <tr>
+                <th>Temperature</th>
+                <td class="temperature"></td>
+            </tr>
+            <tr>
+                <th>Max Temperature</th>
+                <td class="temp-max"></td>
+            </tr>
+            <tr>
+                <th>Min Temperature</th>
+                <td class="temp-min"></td>
+            </tr>
+            <tr>
+                <th>Battery Level</th>
+                <td class="battery"></td>
+            </tr>
+            <tr>
+                <th>Wi-Fi Strength</th>
+                <td class="wifi"></td>
+            </tr>
+            <tr>
+                <th>Last Update</th>
+                <td class="update"></td>
+            </tr>
+            
+            <tr id="rtc-row" class="bg-danger bg-opacity-10" style="display:none;">
+                <th class="text-danger">RTC Error</th>
+                <td class="text-danger"></td>
+            </tr>
+            <tr id="sensor-row" class="bg-danger bg-opacity-10" style="display:none;">
+                <th class="text-danger">Temperature Error</th>
+                <td class="text-danger"></td>
+            </tr>
+            <tr id="battery-row" class="bg-danger bg-opacity-10" style="display:none;">
+                <th class="text-danger">Low Battery</th>
+                <td class="text-danger"></td>
+            </tr>
+            
+            
+        </tbody>
+      </table>
+
+      <a href="{% url 'home' %}" class="btn btn-secondary mt-3">Back to Dashboard</a>
+    </div>
+  </div>
+</div>
+{% block extra_js %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+function updateDeviceDetails() {
+    $.ajax({
+        url: window.location.href,
+        type: "GET",
+        headers: {
+            "X-Requested-With": "XMLHttpRequest"
+        },
+        success: function(data) {
+            $(".card-title").text(data.name);
+
+            // الحالة
+            let statusText = '';
+            let statusClass = '';
+            if (data.status === 'green') {
+                statusText = 'Good';
+                statusClass = '';
+            } else if (data.status === 'red') {
+                statusText = 'Error';
+                statusClass = 'text-danger';
+            } else if (data.status === 'gray') {
+                statusText = 'Offline';
+                statusClass = '';
+            }
+            $("td.status").text(statusText).attr('class', 'status ' + statusClass);
+
+            // باقي البيانات
+            $("td.temperature").text(`${data.temperature} °C`);
+            $("td.temp-max").text(`${data.temperature_max_threshold} °C`);
+            $("td.temp-min").text(`${data.temperature_min_threshold} °C`);
+            $("td.battery").text(`${data.battery_level}%`);
+            $("td.wifi").text(data.wifi_strength);
+            $("td.update").text(data.last_update);
+
+            // الأخطاء
+            toggleRow('rtc-row', data.rtc_error);
+            toggleRow('sensor-row', data.sensor_error);
+            toggleRow('battery-row', data.low_battery);
+        }
+    });
+}
+
+function toggleRow(rowId, value) {
+    if (value) {
+        $(`#${rowId}`).show().find('td').text(value);
+    } else {
+        $(`#${rowId}`).hide();
+    }
+}
+
+updateDeviceDetails();
+setInterval(updateDeviceDetails, 3000);
+</script>
+{% endblock %}
+
+{% endblock %}

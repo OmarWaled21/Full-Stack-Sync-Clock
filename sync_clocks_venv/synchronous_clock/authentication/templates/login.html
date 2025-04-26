@@ -1,0 +1,98 @@
+{% extends 'base_auth.html' %} {% block content %}
+
+<style>
+  .no-focus-ring:focus {
+    box-shadow: none !important;
+  }
+
+  .input-group-append {
+    cursor: pointer;
+  }
+
+  .form-check-inline {
+    display: inline-block;
+  }
+</style>
+
+<form method="POST" action="{% url 'login' %}">
+  {% csrf_token %}
+  <div class="container mt-5" style="max-width: 400px">
+    <div class="text-center mb-4">
+      <h1>Login</h1>
+    </div>
+
+    <div class="input-group flex-nowrap mt-5">
+      <span class="input-group-text rounded-start-pill" id="addon-wrapping"
+        >@</span
+      >
+      <input
+        name="username"
+        type="text"
+        class="form-control rounded-end-pill no-focus-ring"
+        placeholder="Username"
+        aria-label="Username"
+        aria-describedby="addon-wrapping"
+      />
+    </div>
+
+    <div class="input-group flex-nowrap mt-3">
+      <input
+        name="password"
+        type="password"
+        id="password"
+        class="form-control rounded-start-pill no-focus-ring"
+        placeholder="Password"
+        aria-label="Password"
+        aria-describedby="addon-wrapping"
+      />
+      <span
+        class="input-group-text rounded-end-pill"
+        id="toggle-password"
+        onclick="togglePassword()"
+      >
+        <i class="bi bi-eye"></i>
+        <!-- Bootstrap icon for eye -->
+      </span>
+    </div>
+
+    <!-- Save password and forgot password in same line -->
+    <div class="d-flex justify-content-between mt-3">
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" id="remember" name = "remember" />
+        <label class="form-check-label" for="remember"
+          >remember me</label
+        >
+      </div>
+      <a href="{% url 'password_reset' %}" class="text-decoration-none text-danger">Forgot password?</a>
+    </div>
+
+    <!-- Centered Login Button -->
+    <div class="d-grid gap-2 mt-3">
+      <button type="submit" class="btn btn-outline-danger">Login</button>
+    </div>
+  </div>
+</form>
+
+<!-- Include Bootstrap Icons (if not already included) -->
+<link
+  href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"
+  rel="stylesheet"
+/>
+
+<script>
+  function togglePassword() {
+    var passwordField = document.getElementById("password");
+    var toggleButton = document.getElementById("toggle-password");
+
+    // Check the current type of the password field
+    if (passwordField.type === "password") {
+      passwordField.type = "text";
+      toggleButton.innerHTML = '<i class="bi bi-eye-slash"></i>'; // Change icon to "eye-slash"
+    } else {
+      passwordField.type = "password";
+      toggleButton.innerHTML = '<i class="bi bi-eye"></i>'; // Change icon back to "eye"
+    }
+  }
+</script>
+
+{% endblock %}

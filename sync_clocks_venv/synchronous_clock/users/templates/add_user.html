@@ -1,0 +1,13 @@
+{% extends 'base_home.html' %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2 class="mb-4 text-center text-success">Add New User</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-success">Create</button>
+    <a href="{% url 'my_users' %}" class="btn btn-secondary">Cancel</a>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,20 @@
+# created by virtualenv automatically
+/Lib
+/Scripts
+/share
+CACHEDIR.TAG
+pyvenv.cfg
+/synchronous_clock/pass.env
+
+# Ignore migrations folder in all apps
+**/migrations/*
+
+# Ignore virtualenv
+venv/
+
+# Ignore pycache
+__pycache__/
+*.pyc
+
+# Ignore database files
+*.sqlite3

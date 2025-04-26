@@ -1,0 +1,173 @@
+{% extends 'base_home.html' %} 
+{% block content %}
+<div class="container mt-5">
+  <h1 class="text-center">Welcome to Synchronous Clock</h1>
+
+  <!-- Master Clock Display -->
+  <div class="text-center mt-4">
+    <h3>Master Clock</h3>
+    <div class="mb-2">
+      <h4 id="current-date" class="text-muted"></h4>
+    </div>
+    <div class="d-flex justify-content-center align-items-baseline">
+      <h1
+        id="current-time"
+        class="display-1 m-0"
+        data-server-time="{{ current_time|date:'c' }}"
+      ></h1>
+      <h2 id="am-pm-indicator" class="ms-2" style="font-size: 3rem"></h2>
+    </div>
+  </div>
+
+  <!-- Device Stats -->
+  <div class="mt-5">
+    <h3>Device Overview</h3>
+    <div class="row text-center">
+      <div class="col">
+        <div class="card border-success">
+          <div class="card-body">
+            <h5 class="card-title">Total Devices</h5>
+            <p class="card-text display-6 total-devices">{{ total_devices }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card border-success">
+          <div class="card-body text-success">
+            <h5 class="card-title">Green (OK)</h5>
+            <p class="card-text display-6 green-count">
+              {{ status_counts.green }}
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card border-danger">
+          <div class="card-body text-danger">
+            <h5 class="card-title">Red (Error)</h5>
+            <p class="card-text display-6 red-count">{{ status_counts.red }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card border-secondary">
+          <div class="card-body text-muted">
+            <h5 class="card-title">Gray (Disconnected)</h5>
+            <p class="card-text display-6 gray-count">
+              {{ status_counts.gray }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Device List -->
+  <div class="mt-5">
+    <h4>Devices</h4>
+    <div class="row" id="devices-container">
+      {% include 'devices_partial.html' %}
+    </div>
+  </div>
+</div>
+
+{% endblock %} 
+
+{% block extra_js %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  const timeString = document.getElementById("current-time").dataset.serverTime;
+  let serverTime = new Date(timeString);
+
+  // الدالة دي تحدث الوقت وتعرضه
+  function updateClockFromServerTime() {
+    serverTime.setSeconds(serverTime.getSeconds() + 1);
+
+    let hours = serverTime.getHours();
+    const minutes = String(serverTime.getMinutes()).padStart(2, "0");
+    const seconds = String(serverTime.getSeconds()).padStart(2, "0");
+    const ampm = hours >= 12 ? "PM" : "AM";
+    hours = hours % 12 || 12;
+
+    document.getElementById("current-time").textContent = `${hours}:${minutes}:${seconds}`;
+    document.getElementById("am-pm-indicator").textContent = ampm;
+
+    const options = {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    };
+    document.getElementById("current-date").textContent =
+      serverTime.toLocaleDateString(undefined, options);
+  }
+
+  // أول عرض
+  updateClockFromServerTime();
+  // تحديث كل ثانية
+  setInterval(updateClockFromServerTime, 1000);
+
+  function updateDeviceData() {
+    $.ajax({
+      url: window.location.href,
+      type: "GET",
+      headers: {
+        "X-Requested-With": "XMLHttpRequest",
+      },
+      success: function (data) {
+        // تحديث الإحصاءات
+        $(".total-devices").text(data.total_devices);
+        $(".green-count").text(data.status_counts.green);
+        $(".red-count").text(data.status_counts.red);
+        $(".gray-count").text(data.status_counts.gray);
+
+        // تحديث قائمة الأجهزة
+        $.get("/devices-partial/", function (partial) {
+          $("#devices-container").html(partial);
+          // إضافة تأثير مرئي للتحديث
+          $(".device-card")
+            .addClass("updating")
+            .delay(500)
+            .queue(function () {
+              $(this).removeClass("updating").dequeue();
+            });
+        });
+      },
+      error: function (xhr, status, error) {
+        console.error("Error fetching device data:", error);
+      },
+    });
+  }
+
+  // تحديث كل 3 ثواني
+  setInterval(updateDeviceData, 3000);
+  updateDeviceData(); // تشغيل فوراً عند تحميل الصفحة
+
+  // استعلام AJAX لجلب الوقت المحدث من السيرفر
+  function updateTimeFromServer() {
+  $.ajax({
+    url: "/api/",  // ← هنا غيرت المسار
+    type: "GET",
+    headers: {
+      "Authorization": "Token {{ token }}",
+      "X-Requested-With": "XMLHttpRequest",
+    },
+    success: function (response) {
+      const data = response.results;
+      if (data.time_difference !== undefined) {
+        const now = new Date();
+        serverTime = new Date(now.getTime() + data.time_difference * 1000);
+        updateClockFromServerTime();
+      }
+    },
+    error: function (xhr, status, error) {
+      console.error("Error fetching master time:", error);
+    }
+  });
+}
+
+  // تحديث الوقت كل 5 ثواني من السيرفر
+  setInterval(updateTimeFromServer, 5000);
+  updateTimeFromServer(); // تحديث الوقت فورًا عند تحميل الصفحة
+</script>
+{% endblock %}

@@ -1,0 +1,62 @@
+{% for device in devices %}
+<div class="col-md-4">
+  <div
+    class="card mb-4 shadow-sm device-card {% if device.status == 'green' %}border-success {% elif device.status == 'red' %}border-danger {% elif device.status == 'gray' %}border-secondary {% else %}border-light{% endif %}"
+    data-device-id="{{ device.id }}"
+  >
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h5 class="card-title mb-0">
+          {{ device.name|default:"Unnamed Device" }}
+        </h5>
+        <!-- Button to open device details with red color and under status -->
+        <span
+          class="badge bg-{% if device.status == 'green' %}success {% elif device.status == 'red' %}danger {% elif device.status == 'gray' %}secondary {% else %}light{% endif %}"
+        >
+          {{ device.status|title }}
+        </span>
+        <div class="mt-1 text-center">
+            <a href="{% url 'device_details' device.id %}" class="btn text-danger border-0 font-weight-bold">
+              <strong>View Details</strong>
+            </a>
+        </div>
+      </div>
+
+      <p class="mb-1"><strong>ID:</strong> {{ device.device_id }}</p>
+      <p class="mb-1">
+        <strong>Last Sync:</strong> {{ device.last_update|date:"Y-m-d H:i" }}
+      </p>
+
+      <div class="row text-center mt-3">
+        <div class="col">
+          <i class="fas fa-thermometer-half text-primary"></i>
+          <div>{{ device.temperature|default:"N/A" }} °C</div>
+        </div>
+        <div class="col">
+          <i class="fas fa-battery-half text-warning"></i>
+          <div>{{ device.battery_level|default:"N/A" }}%</div>
+        </div>
+        <div class="col">
+          <i class="fas fa-wifi text-info"></i>
+          <div>{{ device.wifi_strength|default:"N/A" }} dBm</div>
+        </div>
+      </div>
+
+      {% if device.rtc_error or device.sensor_error or device.low_battery %}
+      <div class="alert alert-warning mt-3 mb-0 py-2 px-3">
+        <strong>⚠️ Alerts:</strong>
+        <ul class="mb-0 ps-3">
+          {% if device.rtc_error %}
+          <li>RTC Error</li>
+          {% endif %} {% if device.sensor_error %}
+          <li>Sensor Error</li>
+          {% endif %} {% if device.low_battery %}
+          <li>Low Battery</li>
+          {% endif %}
+        </ul>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endfor %}
