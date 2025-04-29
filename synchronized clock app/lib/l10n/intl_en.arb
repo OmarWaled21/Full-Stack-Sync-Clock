@@ -68,6 +68,15 @@
   "deleteClock": "Delete Clock",
   "confirmDeleteClock": "Are you sure deleting this clock?",
   "yes": "Yes",
-  "no": "No"
+  "no": "No",
+  "messages": "Messages",
+  "enableSendMessagesToWhatsApp": "Enable Send Messages To WhatsApp",
+  "messageWhatsappDectionary": "If you enable this option, you must enter the WhatsApp group link to receive notifications.",
+  "groupUrl": "Whatsapp Group Url",
+  "enableSendMessagesToGmail": "Enable Send Messages To Gmail",
+  "messagegmailDectionary": "If you enable this option, you must enter your email to receive notifications.",
+  "enableSendMessagesSms": "Enable Send Messages SMS",
+  "messageSmsDectionary": "If you enable this option, you must enter your phone number to receive notifications in SMS.",
+  "phone": "Phone Number"
 }
   

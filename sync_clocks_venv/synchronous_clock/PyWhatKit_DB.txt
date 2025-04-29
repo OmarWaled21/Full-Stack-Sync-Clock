@@ -1,0 +1,235 @@
+Date: 26/4/2025
+Time: 20:57
+Group ID: KYdALmBUAfX6GFSbYDuiFK
+Message: [2025-04-23T16:02:58.014386] Clock 1: Sensor Error - Temperature sensor malfunction (Temp: 11.0°C)
+--------------------
+Date: 26/4/2025
+Time: 20:59
+Group ID: KYdALmBUAfX6GFSbYDuiFK
+Message: [2025-04-23T16:03:58.027908] Clock 1: Sensor Error - Temperature sensor malfunction (Temp: 11.0°C)
+--------------------
+Date: 26/4/2025
+Time: 21:0
+Group ID: KYdALmBUAfX6GFSbYDuiFK
+Message: [2025-04-24T20:10:38.942996] Clock 5: Sensor Error - Temperature sensor malfunction (Temp: 2.0°C)
+--------------------
+Date: 26/4/2025
+Time: 21:1
+Group ID: KYdALmBUAfX6GFSbYDuiFK
+Message: [2025-04-24T20:11:39.049864] Clock 5: Sensor Error - Temperature sensor malfunction (Temp: 2.0°C)
+--------------------
+Date: 26/4/2025
+Time: 21:3
+Group ID: KYdALmBUAfX6GFSbYDuiFK
+Message: [2025-04-24T20:12:39.073915] Clock 5: Sensor Error - Temperature sensor malfunction (Temp: 2.0°C)
+--------------------
+Date: 26/4/2025
+Time: 21:7
+Group ID: KYdALmBUAfX6GFSbYDuiFK
+Message: [2025-04-26T21:07:08.848712] Clock 7: Low Battery - Battery level is 10%.
+--------------------
+Date: 26/4/2025
+Time: 21:8
+Group ID: KYdALmBUAfX6GFSbYDuiFK
+Message: [2025-04-26T21:07:08.858314] Clock 7: Low Battery - Battery level is 10%.
+--------------------
+Date: 26/4/2025
+Time: 21:12
+Group ID: KYdALmBUAfX6GFSbYDuiFK
+Message: [2025-04-26T21:09:16.042679] Clock 7: Low Battery - Battery level is 10%.
+--------------------
+Date: 26/4/2025
+Time: 21:13
+Group ID: KYdALmBUAfX6GFSbYDuiFK
+Message: [2025-04-26T21:09:16.042679] Clock 7: Low Battery - Battery level is 10%.
+--------------------
+Date: 26/4/2025
+Time: 21:21
+Group ID: KYdALmBUAfX6GFSbYDuiFK
+Message: [2025-04-26T21:21:30.694185] Clock 7: Low Battery - Battery level is 10%.
+--------------------
+Date: 26/4/2025
+Time: 21:22
+Group ID: KYdALmBUAfX6GFSbYDuiFK
+Message: [2025-04-26T21:21:30.696512] Clock 7: Low Battery - Battery level is 10%.
+--------------------
+Date: 26/4/2025
+Time: 21:27
+Group ID: KYdALmBUAfX6GFSbYDuiFK
+Message: [2025-04-26T21:21:30.696512] Clock 7: Low Battery - Battery level is 10%.
+--------------------
+Date: 27/4/2025
+Time: 10:53
+Group ID: KYdALmBUAfX6GFSbYDuiFK
+Message: [2025-04-27T10:53:38.466004] Clock 7: Low Battery - Battery level is 10%.
+--------------------
+Date: 27/4/2025
+Time: 17:3
+Group ID: KYdALmBUAfX6GFSbYDuiFK
+Message: [2025-04-27T17:03:10.755037] Clock 7: Low Battery - Battery level is 10%.
+--------------------
+Date: 28/4/2025
+Time: 11:54
+Group ID: https://chat.whatsapp.com/KYdALmBUAfX6GFSbYDuiFK
+Message: [2025-04-28 11:53:58.741372] Clock 7: Sensor Error - Temperature sensor malfunction (Temp: 1.0°C)
+--------------------
+Date: 28/4/2025
+Time: 11:55
+Group ID: https://chat.whatsapp.com/KYdALmBUAfX6GFSbYDuiFK
+Message: [2025-04-28 11:54:59.096107] Clock 7: Sensor Error - Temperature sensor malfunction (Temp: 1.0°C)
+--------------------
+Date: 28/4/2025
+Time: 11:56
+Group ID: https://chat.whatsapp.com/KYdALmBUAfX6GFSbYDuiFK
+Message: [2025-04-28 11:56:03.743747] Clock 7: Sensor Error - Temperature sensor malfunction (Temp: 1.0°C)
+--------------------
+Date: 28/4/2025
+Time: 11:59
+Group ID: https://chat.whatsapp.com/KYdALmBUAfX6GFSbYDuiFK
+Message: [2025-04-28 11:57:03.766306] Clock 7: Sensor Error - Temperature sensor malfunction (Temp: 1.0°C)
+--------------------
+Date: 28/4/2025
+Time: 12:1
+Group ID: https://chat.whatsapp.com/KYdALmBUAfX6GFSbYDuiFK
+Message: [2025-04-28 11:58:04.453777] Clock 7: Sensor Error - Temperature sensor malfunction (Temp: 1.0°C)
+--------------------
+Date: 28/4/2025
+Time: 12:2
+Group ID: https://chat.whatsapp.com/KYdALmBUAfX6GFSbYDuiFK
+Message: [2025-04-28 11:59:04.465353] Clock 7: Sensor Error - Temperature sensor malfunction (Temp: 1.0°C)
+--------------------
+Date: 28/4/2025
+Time: 12:4
+Group ID: https://chat.whatsapp.com/KYdALmBUAfX6GFSbYDuiFK
+Message: [2025-04-28 12:04:43.763384] Clock 7: Sensor Error - Temperature sensor malfunction (Temp: 2.0°C)
+--------------------
+Date: 28/4/2025
+Time: 12:6
+Group ID: https://chat.whatsapp.com/KYdALmBUAfX6GFSbYDuiFK
+Message: [2025-04-28 12:05:44.466392] Clock 7: Sensor Error - Temperature sensor malfunction (Temp: 2.0°C)
+--------------------
+Date: 28/4/2025
+Time: 16:19
+Group ID: KYdALmBUAfX6GFSbYDuiFK
+Message: [2025-04-28 16:00:22.169983] omar2 (User): login - User logged in.
+--------------------
+Date: 28/4/2025
+Time: 18:45
+Group ID: KYdALmBUAfX6GFSbYDuiFK
+Message: [2025-04-28 18:44:55.759146] Clock 7: Sensor Error - Temperature sensor malfunction (Temp: 2.0°C)
+--------------------
+Date: 28/4/2025
+Time: 19:22
+Group ID: KYdALmBUAfX6GFSbYDuiFK
+Message: [2025-04-28 19:21:05.511079] Clock 7: Sensor Error - Temperature sensor malfunction (Temp: 2.0°C)
+--------------------
+Date: 29/4/2025
+Time: 0:8
+Group ID: KYdALmBUAfX6GFSbYDuiFK
+Message: [2025-04-29 00:08:17.643118] Clock 7: Sensor Error - Temperature sensor malfunction (Temp: 2.0°C)
+--------------------
+Date: 29/4/2025
+Time: 0:9
+Group ID: KYdALmBUAfX6GFSbYDuiFK
+Message: [2025-04-29 00:08:17.645566] Clock 7: Sensor Error - Temperature sensor malfunction (Temp: 2.0°C)
+--------------------
+Date: 29/4/2025
+Time: 0:13
+Group ID: KYdALmBUAfX6GFSbYDuiFK
+Message: [2025-04-29 00:13:09.260108] Clock 7: Sensor Error - Temperature sensor malfunction (Temp: 2.0°C)
+--------------------
+Date: 29/4/2025
+Time: 0:42
+Group ID: KYdALmBUAfX6GFSbYDuiFK
+Message: [2025-04-29 00:42:52.641888] Clock 7: Sensor Error - Temperature sensor malfunction (Temp: 1.0°C)[2025-04-29 00:42:52.645761] Clock 7: Sensor Error - Temperature sensor malfunction (Temp: 1.0°C)
+--------------------
+Date: 29/4/2025
+Time: 0:44
+Group ID: KYdALmBUAfX6GFSbYDuiFK
+Message: [2025-04-29 00:42:52.641888] Clock 7: Sensor Error - Temperature sensor malfunction (Temp: 1.0°C)[2025-04-29 00:42:52.645761] Clock 7: Sensor Error - Temperature sensor malfunction (Temp: 1.0°C)
+--------------------
+Date: 29/4/2025
+Time: 0:45
+Group ID: KYdALmBUAfX6GFSbYDuiFK
+Message: [2025-04-29 00:42:52.641888] Clock 7: Sensor Error - Temperature sensor malfunction (Temp: 1.0°C)[2025-04-29 00:42:52.645761] Clock 7: Sensor Error - Temperature sensor malfunction (Temp: 1.0°C)
+--------------------
+Date: 29/4/2025
+Time: 0:49
+Group ID: KYdALmBUAfX6GFSbYDuiFK
+Message: [2025-04-29 00:49:07.623891] Clock 7: Sensor Error - Temperature sensor malfunction (Temp: 2.0°C)[2025-04-29 00:49:07.627587] Clock 7: Sensor Error - Temperature sensor malfunction (Temp: 2.0°C)
+--------------------
+Date: 29/4/2025
+Time: 9:33
+Group ID: KYdALmBUAfX6GFSbYDuiFK
+Message: [2025-04-29 00:49:07.623891] Clock 7: Sensor Error - Temperature sensor malfunction (Temp: 2.0°C)[2025-04-29 00:49:07.627587] Clock 7: Sensor Error - Temperature sensor malfunction (Temp: 2.0°C)
+--------------------
+Date: 29/4/2025
+Time: 9:38
+Group ID: KYdALmBUAfX6GFSbYDuiFK
+Message: [2025-04-29 00:49:07.623891] Clock 7: Sensor Error - Temperature sensor malfunction (Temp: 2.0°C)
+--------------------
+Date: 29/4/2025
+Time: 9:42
+Group ID: KYdALmBUAfX6GFSbYDuiFK
+Message: [2025-04-29 00:49:07.623891] Clock 7: Sensor Error - Temperature sensor malfunction (Temp: 2.0°C)
+--------------------
+Date: 29/4/2025
+Time: 12:30
+Group ID: KYdALmBUAfX6GFSbYDuiFK
+Message: [2025-04-29 00:49:07.623891] Clock 7: Sensor Error - Temperature sensor malfunction (Temp: 2.0°C)
+--------------------
+Date: 29/4/2025
+Time: 12:32
+Group ID: KYdALmBUAfX6GFSbYDuiFK
+Message: [2025-04-29 00:49:07.623891] Clock 7: Sensor Error - Temperature sensor malfunction (Temp: 2.0°C)
+--------------------
+Date: 29/4/2025
+Time: 12:40
+Group ID: KYdALmBUAfX6GFSbYDuiFK
+Message: [2025-04-29 00:49:07.623891] Clock 7: Sensor Error - Temperature sensor malfunction (Temp: 2.0°C)
+--------------------
+Date: 29/4/2025
+Time: 12:43
+Group ID: KYdALmBUAfX6GFSbYDuiFK
+Message: [2025-04-29 00:49:07.623891] Clock 7: Sensor Error - Temperature sensor malfunction (Temp: 2.0°C)
+--------------------
+Date: 29/4/2025
+Time: 12:46
+Group ID: KYdALmBUAfX6GFSbYDuiFK
+Message: [2025-04-29 00:49:07.623891] Clock 7: Sensor Error - Temperature sensor malfunction (Temp: 2.0°C)
+--------------------
+Date: 29/4/2025
+Time: 12:50
+Group ID: KYdALmBUAfX6GFSbYDuiFK
+Message: [2025-04-29 00:49:07.623891] Clock 7: Sensor Error - Temperature sensor malfunction (Temp: 2.0°C)
+--------------------
+Date: 29/4/2025
+Time: 12:54
+Group ID: KYdALmBUAfX6GFSbYDuiFK
+Message: [2025-04-29 00:49:07.623891] Clock 7: Sensor Error - Temperature sensor malfunction (Temp: 2.0°C)
+--------------------
+Date: 29/4/2025
+Time: 12:56
+Group ID: KYdALmBUAfX6GFSbYDuiFK
+Message: [2025-04-29 00:49:07.623891] Clock 7: Sensor Error - Temperature sensor malfunction (Temp: 2.0°C)
+--------------------
+Date: 29/4/2025
+Time: 12:59
+Group ID: KYdALmBUAfX6GFSbYDuiFK
+Message: [2025-04-29 00:49:07.623891] Clock 7: Sensor Error - Temperature sensor malfunction (Temp: 2.0°C)
+--------------------
+Date: 29/4/2025
+Time: 13:1
+Group ID: KYdALmBUAfX6GFSbYDuiFK
+Message: [2025-04-29 00:49:07.623891] Clock 7: Sensor Error - Temperature sensor malfunction (Temp: 2.0°C)
+--------------------
+Date: 29/4/2025
+Time: 13:9
+Group ID: KYdALmBUAfX6GFSbYDuiFK
+Message: [2025-04-29 00:49:07.623891] Clock 7: Sensor Error - Temperature sensor malfunction (Temp: 2.0°C)
+--------------------
+Date: 29/4/2025
+Time: 15:2
+Group ID: KYdALmBUAfX6GFSbYDuiFK
+Message: [2025-04-29 00:49:07.623891] Clock 7: Sensor Error - Temperature sensor malfunction (Temp: 2.0°C)
+--------------------

@@ -16,12 +16,14 @@ import 'package:synchronized_clock/view/home/pages/edit_master_clock.dart';
 import 'package:synchronized_clock/view/home/pages/support_page.dart';
 import 'package:synchronized_clock/view/home/widgets/language_selection_dialog.dart';
 import 'package:synchronized_clock/view/logs/pages/view_logs_page.dart';
+import 'package:synchronized_clock/view/messages/pages/enable_messages.dart';
 import 'package:synchronized_clock/view_model/accounts_cubit/accounts_cubit.dart';
 import 'package:synchronized_clock/view_model/add_device_cubit/add_device_cubit.dart';
 import 'package:synchronized_clock/view_model/auth_cubit/auth_cubit.dart';
 import 'package:synchronized_clock/view_model/logs_cubit/logs_cubit.dart';
 import 'package:synchronized_clock/view_model/bluetooth_cubit/bluetooth_cubit.dart';
 import 'package:synchronized_clock/view_model/master_clock_cubit/master_clock_cubit.dart';
+import 'package:synchronized_clock/view_model/messages_cubit/messages_cubit.dart';
 
 class CustomDrawer extends StatelessWidget {
   const CustomDrawer({super.key});
@@ -56,70 +58,81 @@ class CustomDrawer extends StatelessWidget {
           // Main body of the drawer
           Column(
             children: [
-              Column(
-                children: [
-                  if (context.read<AuthCubit>().currentUser!.rule == 'admin')
-                    Column(
-                      children: [
-                        ListTile(
-                          leading: Icon(Icons.person),
-                          title: Text(context.lang.users),
-                          onTap: () {
-                            context.push(
-                              BlocProvider(
-                                create: (context) => AccountsCubit(AccountsRepo())..fetchUsers(),
-                                child: AccountsPage(),
-                              ),
-                            );
-                          },
-                        ),
-                        ListTile(
-                          leading: Icon(Icons.add),
-                          title: Text(context.lang.addDevice),
-                          onTap: () {
-                            context.push(
-                              MultiBlocProvider(
-                                providers: [
-                                  BlocProvider(
-                                    create: (context) => BluetoothCubit()..initializeBluetooth(),
-                                  ),
-                                  BlocProvider(
-                                    create: (context) => AddDeviceCubit(AddDeivceRepo()),
-                                  ),
-                                ],
-                                child: BluetoothScanScreen(),
-                              ),
-                            );
-                          },
-                        ),
-                      ],
+              if (context.read<AuthCubit>().currentUser!.rule == 'admin')
+                Column(
+                  children: [
+                    ListTile(
+                      leading: Icon(Icons.person),
+                      title: Text(context.lang.users),
+                      onTap: () {
+                        context.push(
+                          BlocProvider(
+                            create: (context) => AccountsCubit(AccountsRepo())..fetchUsers(),
+                            child: AccountsPage(),
+                          ),
+                        );
+                      },
                     ),
-                  ListTile(
-                    leading: Icon(Icons.insert_drive_file_outlined),
-                    title: Text(context.lang.logs),
-                    onTap: () {
-                      context.push(
-                        BlocProvider(
-                          create: (context) => LogsCubit(LogsRepo())..fetchLogs(),
-                          child: const ViewLogsPage(),
-                        ),
-                      );
-                    },
-                  ),
-                  ListTile(
-                    leading: Icon(Icons.timer_sharp),
-                    title: Text(context.lang.edit_time),
-                    onTap: () {
-                      context.push(
-                        BlocProvider(
-                          create: (context) => MasterClockCubit(HomeRepo())..startClock(),
-                          child: EditMasterClock(),
-                        ),
-                      );
-                    },
-                  ),
-                ],
-              ),
+                    ListTile(
+                      leading: Icon(Icons.add),
+                      title: Text(context.lang.addDevice),
+                      onTap: () {
+                        context.push(
+                          MultiBlocProvider(
+                            providers: [
+                              BlocProvider(
+                                create: (context) => BluetoothCubit()..initializeBluetooth(),
+                              ),
+                              BlocProvider(create: (context) => AddDeviceCubit(AddDeivceRepo())),
+                            ],
+                            child: BluetoothScanScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                    ListTile(
+                      leading: Icon(Icons.message),
+                      title: Text(context.lang.messages),
+                      onTap: () {
+                        context.push(
+                          BlocProvider(
+                            create: (context) => MessagesCubit(),
+                            child: const EnableMessages(),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              if (context.read<AuthCubit>().currentUser!.rule != 'user')
+                Column(
+                  children: [
+                    ListTile(
+                      leading: Icon(Icons.insert_drive_file_outlined),
+                      title: Text(context.lang.logs),
+                      onTap: () {
+                        context.push(
+                          BlocProvider(
+                            create: (context) => LogsCubit(LogsRepo())..fetchLogs(),
+                            child: const ViewLogsPage(),
+                          ),
+                        );
+                      },
+                    ),
+                    ListTile(
+                      leading: Icon(Icons.timer_sharp),
+                      title: Text(context.lang.edit_time),
+                      onTap: () {
+                        context.push(
+                          BlocProvider(
+                            create: (context) => MasterClockCubit(HomeRepo())..startClock(),
+                            child: EditMasterClock(),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
               ListTile(
                 leading: Icon(Icons.support_agent),
                 title: Text(context.lang.supports),

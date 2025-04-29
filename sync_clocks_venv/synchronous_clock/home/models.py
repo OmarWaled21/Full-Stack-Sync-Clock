@@ -124,7 +124,7 @@ class ClockDevice(models.Model):
             ).order_by('-timestamp').first()
 
             # إذا لم يكن هناك سجل سابق أو مر أكثر من دقيقة على السجل الأخير
-            if not last_log or (timezone.now() - last_log.timestamp).seconds >= 60:
+            if not last_log or (timezone.now() - last_log.timestamp).seconds >= 120:
                 DeviceLog.objects.create(
                     device=self,
                     error_type='RTC Error',
@@ -142,7 +142,7 @@ class ClockDevice(models.Model):
             ).order_by('-timestamp').first()
 
             # إذا لم يكن هناك سجل سابق أو مر أكثر من دقيقة على السجل الأخير
-            if not last_log or (timezone.now() - last_log.timestamp).seconds >= 60:
+            if not last_log or (timezone.now() - last_log.timestamp).seconds >= 120:
                 DeviceLog.objects.create(
                     device=self,
                     error_type='Sensor Error',
@@ -159,7 +159,7 @@ class ClockDevice(models.Model):
             ).order_by('-timestamp').first()
 
             # إذا لم يكن هناك سجل سابق أو مر أكثر من دقيقة على السجل الأخير
-            if not last_log or (timezone.now() - last_log.timestamp).seconds >= 60:
+            if not last_log or (timezone.now() - last_log.timestamp).seconds >= 120:
                 DeviceLog.objects.create(
                     device=self,
                     error_type='Low Battery',

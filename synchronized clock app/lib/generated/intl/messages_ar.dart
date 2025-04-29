@@ -49,6 +49,15 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "edit_time": MessageLookupByLibrary.simpleMessage("تعديل الوقت"),
     "email": MessageLookupByLibrary.simpleMessage("البريد الإلكتروني"),
+    "enableSendMessagesSms": MessageLookupByLibrary.simpleMessage(
+      "تفعيل إرسال الرسائل علي رسائل الهاتف SMS",
+    ),
+    "enableSendMessagesToGmail": MessageLookupByLibrary.simpleMessage(
+      "تفعيل إرسال الرسائل على الايميل",
+    ),
+    "enableSendMessagesToWhatsApp": MessageLookupByLibrary.simpleMessage(
+      "تفعيل إرسال رسائل الواتساب",
+    ),
     "enter": MessageLookupByLibrary.simpleMessage("ادخل"),
     "enterWifiCredentials": MessageLookupByLibrary.simpleMessage(
       "ادخل اعدادات الواي فاي",
@@ -61,6 +70,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "رمادي (غير متصل)",
     ),
     "greenOk": MessageLookupByLibrary.simpleMessage("أخضر (سليم)"),
+    "groupUrl": MessageLookupByLibrary.simpleMessage("رابط مجموعة واتساب"),
     "language": MessageLookupByLibrary.simpleMessage("اللغة"),
     "languageCode": MessageLookupByLibrary.simpleMessage("ar"),
     "lastName": MessageLookupByLibrary.simpleMessage("الاسم الأخير"),
@@ -75,6 +85,16 @@ class MessageLookup extends MessageLookupByLibrary {
     "lowBatteryMessage": m0,
     "master_clock": MessageLookupByLibrary.simpleMessage("الساعة الرئيسية"),
     "max": MessageLookupByLibrary.simpleMessage("أقصي"),
+    "messageSmsDectionary": MessageLookupByLibrary.simpleMessage(
+      "إذا قمت بتفعيل هذا الخيار، يجب إدخال رقم الهاتف الخاص بك ليتم إرسال التنبيهات لها.",
+    ),
+    "messageWhatsappDectionary": MessageLookupByLibrary.simpleMessage(
+      "إذا قمت بتفعيل هذا الخيار، يجب إدخال رابط مجموعة الواتساب ليتم إرسال التنبيهات لها.",
+    ),
+    "messagegmailDectionary": MessageLookupByLibrary.simpleMessage(
+      "إذا قمت بتفعيل هذا الخيار، يجب إدخال الإيميل الإلكتروني الخاص بك ليتم إرسال التنبيهات لها.",
+    ),
+    "messages": MessageLookupByLibrary.simpleMessage("الرسائل"),
     "min": MessageLookupByLibrary.simpleMessage("أقل"),
     "no": MessageLookupByLibrary.simpleMessage("لا"),
     "noDevicesFound": MessageLookupByLibrary.simpleMessage("لا يوجد اجهزة"),
@@ -82,6 +102,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "no_data": MessageLookupByLibrary.simpleMessage("لا يوجد بيانات"),
     "offline": MessageLookupByLibrary.simpleMessage("غير متصل"),
     "password": MessageLookupByLibrary.simpleMessage("كلمة المرور"),
+    "phone": MessageLookupByLibrary.simpleMessage("رقم الهاتف"),
     "redError": MessageLookupByLibrary.simpleMessage("أحمر (عطل)"),
     "registrationSuccess": MessageLookupByLibrary.simpleMessage(
       "تم التسجيل بنجاح",

@@ -524,6 +524,86 @@ class S {
   String get no {
     return Intl.message('No', name: 'no', desc: '', args: []);
   }
+
+  /// `Messages`
+  String get messages {
+    return Intl.message('Messages', name: 'messages', desc: '', args: []);
+  }
+
+  /// `Enable Send Messages To WhatsApp`
+  String get enableSendMessagesToWhatsApp {
+    return Intl.message(
+      'Enable Send Messages To WhatsApp',
+      name: 'enableSendMessagesToWhatsApp',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `If you enable this option, you must enter the WhatsApp group link to receive notifications.`
+  String get messageWhatsappDectionary {
+    return Intl.message(
+      'If you enable this option, you must enter the WhatsApp group link to receive notifications.',
+      name: 'messageWhatsappDectionary',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Whatsapp Group Url`
+  String get groupUrl {
+    return Intl.message(
+      'Whatsapp Group Url',
+      name: 'groupUrl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enable Send Messages To Gmail`
+  String get enableSendMessagesToGmail {
+    return Intl.message(
+      'Enable Send Messages To Gmail',
+      name: 'enableSendMessagesToGmail',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `If you enable this option, you must enter your email to receive notifications.`
+  String get messagegmailDectionary {
+    return Intl.message(
+      'If you enable this option, you must enter your email to receive notifications.',
+      name: 'messagegmailDectionary',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enable Send Messages SMS`
+  String get enableSendMessagesSms {
+    return Intl.message(
+      'Enable Send Messages SMS',
+      name: 'enableSendMessagesSms',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `If you enable this option, you must enter your phone number to receive notifications in SMS.`
+  String get messageSmsDectionary {
+    return Intl.message(
+      'If you enable this option, you must enter your phone number to receive notifications in SMS.',
+      name: 'messageSmsDectionary',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Phone Number`
+  String get phone {
+    return Intl.message('Phone Number', name: 'phone', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

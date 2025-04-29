@@ -49,6 +49,15 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "edit_time": MessageLookupByLibrary.simpleMessage("Edit Time"),
     "email": MessageLookupByLibrary.simpleMessage("Email"),
+    "enableSendMessagesSms": MessageLookupByLibrary.simpleMessage(
+      "Enable Send Messages SMS",
+    ),
+    "enableSendMessagesToGmail": MessageLookupByLibrary.simpleMessage(
+      "Enable Send Messages To Gmail",
+    ),
+    "enableSendMessagesToWhatsApp": MessageLookupByLibrary.simpleMessage(
+      "Enable Send Messages To WhatsApp",
+    ),
     "enter": MessageLookupByLibrary.simpleMessage("Enter"),
     "enterWifiCredentials": MessageLookupByLibrary.simpleMessage(
       "Enter Wifi Credentials",
@@ -61,6 +70,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Gray (Disconnected)",
     ),
     "greenOk": MessageLookupByLibrary.simpleMessage("Green (OK)"),
+    "groupUrl": MessageLookupByLibrary.simpleMessage("Whatsapp Group Url"),
     "language": MessageLookupByLibrary.simpleMessage("Language"),
     "languageCode": MessageLookupByLibrary.simpleMessage("en"),
     "lastName": MessageLookupByLibrary.simpleMessage("Last Name"),
@@ -75,6 +85,16 @@ class MessageLookup extends MessageLookupByLibrary {
     "lowBatteryMessage": m0,
     "master_clock": MessageLookupByLibrary.simpleMessage("Master Clock"),
     "max": MessageLookupByLibrary.simpleMessage("Max"),
+    "messageSmsDectionary": MessageLookupByLibrary.simpleMessage(
+      "If you enable this option, you must enter your phone number to receive notifications in SMS.",
+    ),
+    "messageWhatsappDectionary": MessageLookupByLibrary.simpleMessage(
+      "If you enable this option, you must enter the WhatsApp group link to receive notifications.",
+    ),
+    "messagegmailDectionary": MessageLookupByLibrary.simpleMessage(
+      "If you enable this option, you must enter your email to receive notifications.",
+    ),
+    "messages": MessageLookupByLibrary.simpleMessage("Messages"),
     "min": MessageLookupByLibrary.simpleMessage("Min"),
     "no": MessageLookupByLibrary.simpleMessage("No"),
     "noDevicesFound": MessageLookupByLibrary.simpleMessage("No devices found"),
@@ -82,6 +102,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "no_data": MessageLookupByLibrary.simpleMessage("No Data"),
     "offline": MessageLookupByLibrary.simpleMessage("Offline"),
     "password": MessageLookupByLibrary.simpleMessage("Password"),
+    "phone": MessageLookupByLibrary.simpleMessage("Phone Number"),
     "redError": MessageLookupByLibrary.simpleMessage("Red (Error)"),
     "registrationSuccess": MessageLookupByLibrary.simpleMessage(
       "Registration successful",
