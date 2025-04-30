@@ -4,15 +4,27 @@ from .utils import get_master_time
 from .forms import DeviceForm, MasterClockForm
 from .models import ClockDevice, MasterClock
 from rest_framework.authtoken.models import Token
+from django.db.models import Case, When, Value, IntegerField
 
 def home(request):
     if not request.user.is_authenticated:
         return redirect('login')
 
     if request.user.rule == 'admin':
-        devices = ClockDevice.objects.filter(admin=request.user)
+        device_qs  = ClockDevice.objects.filter(admin=request.user)
     else:
-        devices = ClockDevice.objects.filter(admin=request.user.admin)
+        device_qs  = ClockDevice.objects.filter(admin=request.user.admin)
+    
+     # ترتيب حسب الحالة: green -> red -> gray
+    status_order = Case(
+        When(status='green', then=Value(0)),
+        When(status='red', then=Value(1)),
+        When(status='gray', then=Value(2)),
+        default=Value(3),
+        output_field=IntegerField()
+    )
+
+    devices = device_qs.annotate(status_order=status_order).order_by('status_order', 'name')
     
     # تحديث جميع الحالات قبل عرض الصفحة
     for device in devices:
@@ -57,9 +69,21 @@ def home(request):
 
 def devices_partial(request):
     if request.user.rule == 'admin':
-        devices = ClockDevice.objects.filter(admin=request.user)
+        device_qs  = ClockDevice.objects.filter(admin=request.user)
     else:
-        devices = ClockDevice.objects.filter(admin=request.user.admin)
+        device_qs  = ClockDevice.objects.filter(admin=request.user.admin)
+        
+     # ترتيب حسب الحالة: green -> red -> gray
+    status_order = Case(
+        When(status='green', then=Value(0)),
+        When(status='red', then=Value(1)),
+        When(status='gray', then=Value(2)),
+        default=Value(3),
+        output_field=IntegerField()
+    )
+
+    devices = device_qs.annotate(status_order=status_order).order_by('status_order', 'name')    
+    
     # تحديث جميع الحالات قبل عرض الجزئية
     for device in devices:
         device.update_status()

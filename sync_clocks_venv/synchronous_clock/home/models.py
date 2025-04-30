@@ -39,7 +39,7 @@ class ClockDevice(models.Model):
     rtc_error = models.BooleanField(default=False)
     sensor_error = models.BooleanField(default=False)
     low_battery = models.BooleanField(default=False)
-    last_update = models.DateTimeField(auto_now=True)
+    last_update = models.DateTimeField(null=True, blank=True)
     temperature_max_threshold = models.FloatField(default=40.0)
     temperature_min_threshold = models.FloatField(default=-20.0)  
     firmware_version = models.CharField(max_length=20, default='1.0.0')
@@ -89,82 +89,39 @@ class ClockDevice(models.Model):
 
     def update_status(self):
         """تحديث حالة الجهاز تلقائياً بناءً على جميع الشروط"""
-        # حفظ الحالة الحالية قبل التحديث
-        old_status = self.status
-        old_rtc_error = self.rtc_error
-        old_low_battery = self.low_battery
+        # حساب الفارق بين last_update و get_master_time()
+        time_diff = get_master_time() - self.last_update
         
-        # التحقق من جميع الشروط
+         # التحقق من جميع الشروط
         is_connected = self.check_connection()
         good_wifi = self.check_wifi_strength()
         good_battery = self.check_battery()
         good_sensors = self.check_sensors()
         
-        # تحديث الحالة بناءً على الشروط
-        if not is_connected or not good_wifi:
-            new_status = 'gray'
-        elif not good_battery or not good_sensors:
-            new_status = 'red'
+        # # تحديث الحالة بناءً على الشروط
+        # if not is_connected or not good_wifi:
+        #     new_status = 'gray'
+        # elif not good_battery or not good_sensors:
+        #     new_status = 'red'
+        # else:
+        #     new_status = 'green'
+        
+        # # تحديث الحالة فقط إذا تغيرت
+        # if new_status != old_status:
+        #     self.status = new_status
+        #     self.save()
+        
+        # التحقق إذا كان الفارق أقل من دقيقتين
+        if time_diff < timedelta(minutes=2):
+            # التحقق من وجود أي أخطاء
+            if is_connected and good_sensors and good_battery:
+                self.status = 'green'  # حالة جيدة
+            else:
+                self.status = 'red'  # يوجد خطأ
         else:
-            new_status = 'green'
-        
-        # تحديث الحالة فقط إذا تغيرت
-        if new_status != old_status:
-            self.status = new_status
-            self.save()
-        
-        # تسجيل الأخطاء فقط إذا كانت جديدة أو تغيرت
-        if self.rtc_error and (self.rtc_error != old_rtc_error):
-            message = 'Real-Time Clock synchronization issue.'
-            last_log = DeviceLog.objects.filter(
-                device=self,
-                error_type='RTC Error',
-                message=message
-            ).order_by('-timestamp').first()
-
-            # إذا لم يكن هناك سجل سابق أو مر أكثر من دقيقة على السجل الأخير
-            if not last_log or (timezone.now() - last_log.timestamp).seconds >= 120:
-                DeviceLog.objects.create(
-                    device=self,
-                    error_type='RTC Error',
-                    message=message
-                )
-
-        if self.sensor_error:
-            temp_display = f" (Temp: {self.temperature}°C)" if self.temperature is not None else " (Temp: null)"
-            message = f'Temperature sensor malfunction{temp_display}'
+            self.status = 'gray'  # أكثر من دقيقتين
+        self.save()
             
-            last_log = DeviceLog.objects.filter(
-                device=self,
-                error_type='Sensor Error',
-                message=message
-            ).order_by('-timestamp').first()
-
-            # إذا لم يكن هناك سجل سابق أو مر أكثر من دقيقة على السجل الأخير
-            if not last_log or (timezone.now() - last_log.timestamp).seconds >= 120:
-                DeviceLog.objects.create(
-                    device=self,
-                    error_type='Sensor Error',
-                    message=message
-                )
-            
-        if self.low_battery and (self.low_battery != old_low_battery):
-            message = f'Battery level is {self.battery_level}%.'
-            
-            last_log = DeviceLog.objects.filter(
-                device=self,
-                error_type='Low Battery',
-                message=message
-            ).order_by('-timestamp').first()
-
-            # إذا لم يكن هناك سجل سابق أو مر أكثر من دقيقة على السجل الأخير
-            if not last_log or (timezone.now() - last_log.timestamp).seconds >= 120:
-                DeviceLog.objects.create(
-                    device=self,
-                    error_type='Low Battery',
-                    message=message
-                )
-        
         return self.status
     
     def update_firmware(self):

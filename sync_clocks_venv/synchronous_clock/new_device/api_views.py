@@ -20,6 +20,7 @@ def add_device(request):
     battery_level = request.data.get('battery_level')
     name = request.data.get('name')
     firmware_url = request.data.get('firmware_url')
+    last_update = request.data.get('last_update')
     
 
     if not device_id:
@@ -41,6 +42,7 @@ def add_device(request):
         battery_level=battery_level,
         name=name,
         firmware_url=firmware_url,
+        last_update=last_update
     )
 
     serializer = ClockDeviceSerializer(device)
@@ -60,6 +62,7 @@ def update_device(request, device_id):
     rtc_error = request.data.get('rtc_error')
     sensor_error = request.data.get('sensor_error')
     low_battery = request.data.get('low_battery')
+    last_update = request.data.get('last_update')
 
     try:
         # نحاول جلب الجهاز بناءً على الـ device_id
@@ -86,6 +89,8 @@ def update_device(request, device_id):
             device.sensor_error = sensor_error
         if low_battery is not None:
             device.low_battery = low_battery
+        if last_update is not None:
+            device.last_update = last_update
 
         # حفظ التحديثات
         device.save()

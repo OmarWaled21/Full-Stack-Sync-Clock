@@ -4,6 +4,7 @@
 #include <LiquidCrystal_I2C.h>
 #include <Wire.h>
 #include <RTClib.h>
+#include <ArduinoJson.h>
 
 Preferences preferences;
 LiquidCrystal_I2C lcd(0x27, 16, 4);
@@ -17,7 +18,7 @@ const char* input_token = "ef5a859df1d6131e468155a1081010ebeba9d108";
 String global_token = "";
 String global_device_id = "";
 unsigned long lastSendTime = 0;
-const unsigned long interval = 10000;        // 10 ثواني
+const unsigned long interval = 30000;        // 30 ثواني
 unsigned long lastTimeDisplayed = 0;         // الوقت الذي تم فيه عرض الحالة آخر مرة
 const unsigned long displayDuration = 3000;  // مدة العرض 3 ثوانٍ
 unsigned long lastTimeUpdate = 0;
@@ -26,6 +27,12 @@ const unsigned long timeUpdateInterval = 10000;  // تحديث الوقت من �
 String statusMessage = "";
 float lastTemperature = 0.0;
 int lastWifiStrength = 0;
+
+String deviceName = "";
+float battery_threshold = 20.0;
+float temperature_min_threshold = 20.0;
+float temperature_max_threshold = 40.0;
+int rtc_update_counter = 0;
 
 void setup() {
   Serial.begin(115200);
@@ -118,7 +125,7 @@ void loop() {
       lcd.print("                ");  // مسح السطر
       statusMessage = "";             // إفراغ الرسالة
     }
-  } 
+  }
 }
 
 // ✅ التحقق من وجود الجهاز في السيرفر
@@ -134,6 +141,39 @@ bool checkDeviceExists(const String& device_id, const String& token) {
 
     if (httpResponseCode == 200) {
       Serial.println("📡 الجهاز موجود في قاعدة البيانات");
+
+      String payload = http.getString();
+
+      // تحليل JSON
+      const size_t capacity = 1024;
+      DynamicJsonDocument doc(capacity);
+      DeserializationError error = deserializeJson(doc, payload);
+      if (error) {
+        Serial.print("❌ خطأ في JSON: ");
+        Serial.println(error.c_str());
+        http.end();
+        return false;
+      }
+
+      // استخراج البيانات من الـ results
+      JsonObject results = doc["results"];
+
+      deviceName = results["name"].as<String>();
+      
+      if (results.containsKey("temperature_min_threshold") && results.containsKey("temperature_max_threshold")) {
+        float temperature_min_threshold = results["temperature_min_threshold"].as<float>();
+        float temperature_max_threshold = results["temperature_max_threshold"].as<float>();
+
+        Serial.print("اسم الجهاز: ");
+        Serial.println(deviceName);
+        Serial.print("🌡️ الحد الأدنى: ");
+        Serial.println(temperature_min_threshold);
+        Serial.print("🌡️ الحد الأقصى: ");
+        Serial.println(temperature_max_threshold);
+      } else {
+        Serial.println("⚠️ لم يتم العثور على الحدود في البيانات");
+      }
+
       http.end();
       return true;
     } else {
@@ -163,15 +203,25 @@ void sendDeviceDataToServer(const String& device_id, const String& token) {
   float temperature = random(200, 401) / 10.0;
   int wifi_strength = WiFi.RSSI();
   int battery_level = 80;
+  DateTime now = rtc.now();
+  unsigned long micros_part = micros() % 1000000;  // وهميًا لمطابقة التنسيق
 
-  String jsonData = "{\"device_id\":\"" + device_id + "\", \"temperature\":\"" + String(temperature) + "\", \"wifi_strength\":" + String(wifi_strength) + ", \"battery_level\":" + String(battery_level) + ", \"token\":\"" + token + "\"}";
+  char timestamp[30];
+  snprintf(timestamp, sizeof(timestamp), "%04d-%02d-%02d %02d:%02d:%02d.%06lu",
+           now.year(), now.month(), now.day(),
+           now.hour(), now.minute(), now.second(),
+           micros_part);
+
+  String last_update = String(timestamp);
+
+  String jsonData = "{\"device_id\":\"" + device_id + "\", \"temperature\":\"" + String(temperature) + "\", \"wifi_strength\":" + String(wifi_strength) + ", \"last_update\":\"" + last_update + "\", \"battery_level\":" + String(battery_level) + "}";
 
   int httpResponseCode = http.POST(jsonData);
 
   lastTemperature = temperature;
   lastWifiStrength = wifi_strength;
 
-
+  check_sensors(device_id, deviceName, lastTemperature, battery_level, token);
   if (httpResponseCode > 0) {
     Serial.println("📤 تم إرسال البيانات بنجاح");
   } else {
@@ -240,8 +290,19 @@ void sendData(const String& device_id, const String& token) {
   float temperature = random(201, 400) / 10.0;
   int wifi_strength = WiFi.RSSI();
   int battery_level = 85;
+  DateTime now = rtc.now();
+  unsigned long micros_part = micros() % 1000000;  // وهميًا لمطابقة التنسيق
 
-  String jsonData = "{\"device_id\":\"" + device_id + "\", \"temperature\":\"" + String(temperature) + "\", \"wifi_strength\":" + String(wifi_strength) + ", \"battery_level\":" + String(battery_level) + "}";
+  char timestamp[30];
+  snprintf(timestamp, sizeof(timestamp), "%04d-%02d-%02d %02d:%02d:%02d.%06lu",
+           now.year(), now.month(), now.day(),
+           now.hour(), now.minute(), now.second(),
+           micros_part);
+
+  String last_update = String(timestamp);
+
+
+  String jsonData = "{\"device_id\":\"" + device_id + "\", \"temperature\":\"" + String(temperature) + "\", \"wifi_strength\":" + String(wifi_strength) + ", \"last_update\":\"" + last_update + "\", \"battery_level\":" + String(battery_level) + "}";
 
   int httpResponseCode = http.sendRequest("PUT", jsonData);
   String currentTime = fetchCurrentTime(token);
@@ -255,6 +316,8 @@ void sendData(const String& device_id, const String& token) {
 
     lastTemperature = temperature;
     lastWifiStrength = wifi_strength;
+
+    check_sensors(device_id, deviceName, lastTemperature, battery_level, token);
 
     if (currentTime == "") {
       Serial.println("❌ Failed to get current time");
@@ -287,9 +350,11 @@ void updateTimeFromServer() {
       rtc.adjust(newTime);
       Serial.println("✅ تم تحديث الوقت من السيرفر");
       statusMessage = "Time Updated";
+      rtc_update_counter ++;
     } else {
       Serial.println("🕒 الوقت متزامن، لا حاجة للتحديث");
       statusMessage = "Time OK";
+      rtc_update_counter = 0;
     }
     lastTimeDisplayed = millis();
   } else {
@@ -298,7 +363,6 @@ void updateTimeFromServer() {
     lastTimeDisplayed = millis();
   }
 }
-
 
 void updateRTCFromServerTime(const String& currentTime) {
   if (currentTime == "") return;
@@ -349,4 +413,68 @@ void displayCurrentTime() {
 
   lcd.setCursor(0, 1);
   lcd.print(dateTimeBuffer);
+}
+
+// Log structure
+void add_device_log(const String& device_id, const String& device_name, const String& error_type, const String& message, const String& token) {
+  String timestamp = rtc.now().timestamp(DateTime::TIMESTAMP_FULL); // Get timestamp from RTC
+  String log = "{";
+  log += "\"device_id\": \"" + device_id + "\",";
+  log += "\"device_name\": \"" + device_name + "\",";
+  log += "\"timestamp\": \"" + timestamp + "\",";
+  log += "\"error_type\": \"" + error_type + "\",";
+  log += "\"message\": \"" + message + "\",";
+  log += "\"sent\": false";
+  log += "}";
+
+  Serial.println("Log created:");
+  Serial.println(log);
+
+  // إرسال الـ log إلى السيرفر عبر API
+  if (WiFi.status() == WL_CONNECTED) {
+    HTTPClient http;
+    String serverUrl = "http://192.168.1.3:8000/api/logs/add_device_log/"; // رابط الـ API للإرسال
+    http.begin(serverUrl);
+    http.addHeader("Authorization", "Token " + token);  // إضافة التوكن للتحقق من الصلاحية
+    http.addHeader("Content-Type", "application/json");
+
+    // إرسال الـ POST request
+    int httpResponseCode = http.POST(log);
+
+    // التحقق من حالة الاستجابة
+    if (httpResponseCode == 201) {
+      Serial.println("✅ Log sent successfully.");
+    } else {
+      Serial.print("❌ Error sending log. HTTP Response Code: ");
+      Serial.println(httpResponseCode);
+    }
+
+    http.end();
+  } else {
+    Serial.println("📴 غير متصل بالواي فاي");
+  }
+}
+
+// Function to check for temperature and battery errors
+void check_sensors(const String& device_id, const String& device_name, float temperature, int battery_level, const String& token) {
+  // Temperature check
+  if (isnan(temperature) || temperature < temperature_min_threshold || temperature > temperature_max_threshold) {
+    String temp_msg = "Temperature sensor malfunction (Temp: " + String(temperature, 1) + " C)";
+    add_device_log(device_id, device_name, "temp sensor", temp_msg, token);
+  }
+
+  // Battery check
+  if (battery_level < battery_threshold) {
+    String battery_msg = "Battery is low (Battery: " + String(battery_level) + " %)";
+    add_device_log(device_id, device_name, "battery low", battery_msg, token);
+  }
+
+  // RTC check
+   if (rtc_update_counter >= 3) {
+    String rtc_msg = "Time has been updated more than limits. There is something wrong with the RTC.";
+    add_device_log(device_id, device_name, "rtc error", rtc_msg, token);
+    
+    // Optionally reset the counter or keep increasing for continued logging
+    rtc_update_counter = 0;
+  }
 }
