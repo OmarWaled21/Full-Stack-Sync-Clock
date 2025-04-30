@@ -92,7 +92,6 @@ class ClockDevice(models.Model):
         # حفظ الحالة الحالية قبل التحديث
         old_status = self.status
         old_rtc_error = self.rtc_error
-        old_sensor_error = self.sensor_error
         old_low_battery = self.low_battery
         
         # التحقق من جميع الشروط
