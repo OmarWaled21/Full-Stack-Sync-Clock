@@ -73,10 +73,10 @@ def devices_partial(request):
     else:
         device_qs  = ClockDevice.objects.filter(admin=request.user.admin)
         
-     # ترتيب حسب الحالة: green -> red -> gray
+     # ترتيب حسب الحالة: red -> green -> gray
     status_order = Case(
-        When(status='green', then=Value(0)),
-        When(status='red', then=Value(1)),
+        When(status='red', then=Value(0)),
+        When(status='green', then=Value(1)),
         When(status='gray', then=Value(2)),
         default=Value(3),
         output_field=IntegerField()

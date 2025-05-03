@@ -186,10 +186,6 @@ bool checkDeviceExists(const String& device_id, const String& token) {
 
         Serial.print("اسم الجهاز: ");
         Serial.println(deviceName);
-        Serial.print("🌡️ الحد الأدنى: ");
-        Serial.println(temperature_min_threshold);
-        Serial.print("🌡️ الحد الأقصى: ");
-        Serial.println(temperature_max_threshold);
       } else {
         Serial.println("⚠️ لم يتم العثور على الحدود في البيانات");
       }
