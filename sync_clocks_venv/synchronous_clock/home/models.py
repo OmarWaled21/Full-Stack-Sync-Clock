@@ -41,7 +41,7 @@ class ClockDevice(models.Model):
     low_battery = models.BooleanField(default=False)
     last_update = models.DateTimeField(null=True, blank=True)
     temperature_max_threshold = models.FloatField(default=40.0)
-    temperature_min_threshold = models.FloatField(default=-20.0)  
+    temperature_min_threshold = models.FloatField(default=20.0)  
     firmware_version = models.CharField(max_length=20, default='1.0.0')
     firmware_url = models.URLField(blank=True, null=True)
     last_calibrated = models.DateTimeField(default=timezone.now)

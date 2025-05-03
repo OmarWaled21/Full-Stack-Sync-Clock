@@ -5,6 +5,7 @@
 #include <Wire.h>
 #include <RTClib.h>
 #include <ArduinoJson.h>
+#include <SD.h>
 
 Preferences preferences;
 LiquidCrystal_I2C lcd(0x27, 16, 4);
@@ -34,9 +35,28 @@ float temperature_min_threshold = 20.0;
 float temperature_max_threshold = 40.0;
 int rtc_update_counter = 0;
 
+#define SD_CS 5
+
 void setup() {
   Serial.begin(115200);
   delay(1000);
+
+  if (!SD.begin(SD_CS)) {
+    Serial.println("❌ SD Card initialization failed!");
+  } else {
+    Serial.println("✅ SD Card initialized.");
+  }
+
+  if (!SD.exists("/logs.csv")) {
+    File newFile = SD.open("/logs.csv", FILE_WRITE);
+    if (newFile) {
+      newFile.println("device_id,device_name,timestamp,error_type,message,send_server");
+      newFile.close();
+      Serial.println("✅ logs.csv created.");
+    } else {
+      Serial.println("❌ Failed to create logs.csv");
+    }
+  }
 
   // 🧠 حفظ القيم في Preferences إذا لم تكن موجودة
   preferences.begin("wifi-creds", false);
@@ -132,7 +152,7 @@ void loop() {
 bool checkDeviceExists(const String& device_id, const String& token) {
   if (WiFi.status() == WL_CONNECTED) {
     HTTPClient http;
-    String serverUrl = "http://192.168.1.3:8000/api/device/" + device_id + "/";
+    String serverUrl = "http://192.168.1.14:8000/api/device/" + device_id + "/";
     http.begin(serverUrl);
     http.addHeader("Authorization", "Token " + token);
     http.addHeader("Content-Type", "application/json");
@@ -159,7 +179,7 @@ bool checkDeviceExists(const String& device_id, const String& token) {
       JsonObject results = doc["results"];
 
       deviceName = results["name"].as<String>();
-      
+
       if (results.containsKey("temperature_min_threshold") && results.containsKey("temperature_max_threshold")) {
         float temperature_min_threshold = results["temperature_min_threshold"].as<float>();
         float temperature_max_threshold = results["temperature_max_threshold"].as<float>();
@@ -195,7 +215,7 @@ void sendDeviceDataToServer(const String& device_id, const String& token) {
   }
 
   HTTPClient http;
-  String serverUrl = "http://192.168.1.3:8000/api/new_device/";
+  String serverUrl = "http://192.168.1.14:8000/api/new_device/";
   http.begin(serverUrl);
   http.addHeader("Authorization", "Token " + token);
   http.addHeader("Content-Type", "application/json");
@@ -234,7 +254,7 @@ void sendDeviceDataToServer(const String& device_id, const String& token) {
 // بيجيب وقت السيرفر الحالي
 String fetchCurrentTime(const String& token) {
   HTTPClient http;
-  String serverUrl = "http://192.168.1.3:8000/api/";
+  String serverUrl = "http://192.168.1.14:8000/api/";
   http.begin(serverUrl);
 
   http.addHeader("Authorization", "Token " + token);
@@ -270,28 +290,11 @@ String fetchCurrentTime(const String& token) {
 
 // بيبعت ابديت للداتا ويحطها في السيرفر
 void sendData(const String& device_id, const String& token) {
-  if (WiFi.status() != WL_CONNECTED) {
-    Serial.println("📴 WiFi not connected");
-    return;
-  }
-  if (!checkDeviceExists(device_id, token)) {
-    Serial.println("🔄 Device not found, resetting Wi-Fi...");
-    delay(1000);
-    return;
-  }
-
-  HTTPClient http;
-  Serial.println("device id:" + device_id);
-  String serverUrl = "http://192.168.1.3:8000/api/new_device/device/" + device_id + "/update/";
-  http.begin(serverUrl);
-  http.addHeader("Authorization", "Token " + token);
-  http.addHeader("Content-Type", "application/json");
-
   float temperature = random(201, 400) / 10.0;
   int wifi_strength = WiFi.RSSI();
   int battery_level = 85;
   DateTime now = rtc.now();
-  unsigned long micros_part = micros() % 1000000;  // وهميًا لمطابقة التنسيق
+  unsigned long micros_part = micros() % 1000000;
 
   char timestamp[30];
   snprintf(timestamp, sizeof(timestamp), "%04d-%02d-%02d %02d:%02d:%02d.%06lu",
@@ -301,29 +304,47 @@ void sendData(const String& device_id, const String& token) {
 
   String last_update = String(timestamp);
 
+  // ✅ دايمًا نحدث القيم ونفحص الحساسات ونسجل اللوج محليًا
+  lastTemperature = temperature;
+  lastWifiStrength = wifi_strength;
+
+  check_sensors(global_device_id, deviceName, temperature, battery_level, global_token);
+
+  // ❌ لو مفيش واي فاي، نخرج بعد ما سجلنا
+  if (WiFi.status() != WL_CONNECTED) {
+    Serial.println("📴 WiFi not connected. Only saved to SD.");
+    return;
+  }
+
+  // 🌐 لو في نت، نحاول نبعت
+  if (!checkDeviceExists(device_id, token)) {
+    Serial.println("🔄 Device not found, resetting Wi-Fi...");
+    delay(1000);
+    return;
+  }
+
+  HTTPClient http;
+  Serial.println("device id:" + device_id);
+  String serverUrl = "http://192.168.1.14:8000/api/new_device/device/" + device_id + "/update/";
+  http.begin(serverUrl);
+  http.addHeader("Authorization", "Token " + token);
+  http.addHeader("Content-Type", "application/json");
 
   String jsonData = "{\"device_id\":\"" + device_id + "\", \"temperature\":\"" + String(temperature) + "\", \"wifi_strength\":" + String(wifi_strength) + ", \"last_update\":\"" + last_update + "\", \"battery_level\":" + String(battery_level) + "}";
 
   int httpResponseCode = http.sendRequest("PUT", jsonData);
   String currentTime = fetchCurrentTime(token);
 
-  bool timeUpdated = false;
-  bool timeFailed = false;
-
   if (httpResponseCode > 0) {
     Serial.println("📤 Periodic data sent successfully");
     Serial.println("Temperature: " + String(temperature) + " Battery Level: " + String(battery_level));
-
-    lastTemperature = temperature;
-    lastWifiStrength = wifi_strength;
-
-    check_sensors(device_id, deviceName, lastTemperature, battery_level, token);
-
-    if (currentTime == "") {
-      Serial.println("❌ Failed to get current time");
-      timeFailed = true;
-    } else {
+    delay(100);
+    try_send_pending_logs(token);  // جرب تبعت اللوجات اللي كانت متسجلة قبل كده
+    delay(100);
+    if (currentTime != "") {
       Serial.println("🕒 Current server time: " + currentTime);
+    } else {
+      Serial.println("❌ Failed to get current time");
     }
   } else {
     Serial.println("❌ Error sending periodic data: " + String(httpResponseCode));
@@ -331,6 +352,7 @@ void sendData(const String& device_id, const String& token) {
 
   http.end();
 }
+
 
 void updateTimeFromServer() {
   String currentTime = fetchCurrentTime(global_token);
@@ -350,7 +372,7 @@ void updateTimeFromServer() {
       rtc.adjust(newTime);
       Serial.println("✅ تم تحديث الوقت من السيرفر");
       statusMessage = "Time Updated";
-      rtc_update_counter ++;
+      rtc_update_counter++;
     } else {
       Serial.println("🕒 الوقت متزامن، لا حاجة للتحديث");
       statusMessage = "Time OK";
@@ -385,7 +407,7 @@ void updateRTCFromServerTime(const String& currentTime) {
 
 // دالة عرض الحرارة وقوة الواي فاي
 void displayTemperatureAndWifi() {
-  float temperature = random(201, 400) / 10.0;
+  float temperature = random(201, 200) / 10.0;
   int wifi_strength = WiFi.RSSI();
 
   // تحديث السطر الثالث بالحرارة وقوة الواي فاي
@@ -417,42 +439,119 @@ void displayCurrentTime() {
 
 // Log structure
 void add_device_log(const String& device_id, const String& device_name, const String& error_type, const String& message, const String& token) {
-  String timestamp = rtc.now().timestamp(DateTime::TIMESTAMP_FULL); // Get timestamp from RTC
-  String log = "{";
-  log += "\"device_id\": \"" + device_id + "\",";
-  log += "\"device_name\": \"" + device_name + "\",";
-  log += "\"timestamp\": \"" + timestamp + "\",";
-  log += "\"error_type\": \"" + error_type + "\",";
-  log += "\"message\": \"" + message + "\",";
-  log += "\"sent\": false";
-  log += "}";
+  String timestamp = rtc.now().timestamp(DateTime::TIMESTAMP_FULL);
 
-  Serial.println("Log created:");
-  Serial.println(log);
-
-  // إرسال الـ log إلى السيرفر عبر API
-  if (WiFi.status() == WL_CONNECTED) {
-    HTTPClient http;
-    String serverUrl = "http://192.168.1.3:8000/api/logs/add_device_log/"; // رابط الـ API للإرسال
-    http.begin(serverUrl);
-    http.addHeader("Authorization", "Token " + token);  // إضافة التوكن للتحقق من الصلاحية
-    http.addHeader("Content-Type", "application/json");
-
-    // إرسال الـ POST request
-    int httpResponseCode = http.POST(log);
-
-    // التحقق من حالة الاستجابة
-    if (httpResponseCode == 201) {
-      Serial.println("✅ Log sent successfully.");
-    } else {
-      Serial.print("❌ Error sending log. HTTP Response Code: ");
-      Serial.println(httpResponseCode);
-    }
-
-    http.end();
+  // حفظ في CSV
+  File file = SD.open("/logs.csv", FILE_APPEND);
+  if (file) {
+    file.print(device_id);
+    file.print(",");
+    file.print(device_name);
+    file.print(",");
+    file.print(timestamp);
+    file.print(",");
+    file.print(error_type);
+    file.print(",");
+    file.print(message);
+    file.print(",");
+    file.println("false");  // send_server = false
+    file.close();
+    Serial.println("💾 Log saved to SD card.");
   } else {
-    Serial.println("📴 غير متصل بالواي فاي");
+    Serial.println("❌ Failed to write log to SD card.");
   }
+}
+
+void try_send_pending_logs(const String& token) {
+  File file = SD.open("/logs.csv", FILE_READ);
+  if (!file) {
+    Serial.println("❌ Failed to open logs.csv for reading.");
+    return;
+  }
+
+  String lines[100];
+  int index = 0;
+
+  while (file.available() && index < 100) {
+    String line = file.readStringUntil('\n');
+    line.trim();
+    if (line.length() > 0) {
+      lines[index++] = line;
+    }
+  }
+  file.close();
+
+  for (int i = 0; i < index; i++) {
+    // تجاهل الهيدر (السطر الأول) لو موجود
+    if (lines[i].startsWith("device_id")) continue;
+
+    String trimmedLine = lines[i];
+    trimmedLine.trim();
+    if (trimmedLine.endsWith("false")) {
+      // استخراج الحقول من السطر
+      int firstComma = lines[i].indexOf(',');
+      int secondComma = lines[i].indexOf(',', firstComma + 1);
+      int thirdComma = lines[i].indexOf(',', secondComma + 1);
+      int fourthComma = lines[i].indexOf(',', thirdComma + 1);
+      int fifthComma = lines[i].indexOf(',', fourthComma + 1);
+
+      String device_id = lines[i].substring(0, firstComma);
+      String device_name = lines[i].substring(firstComma + 1, secondComma);
+      String timestamp = lines[i].substring(secondComma + 1, thirdComma);
+      String error_type = lines[i].substring(thirdComma + 1, fourthComma);
+      String message = lines[i].substring(fourthComma + 1, fifthComma);
+
+      String json = "{";
+      json += "\"device_id\": \"" + device_id + "\",";
+      json += "\"device_name\": \"" + device_name + "\",";
+      json += "\"timestamp\": \"" + timestamp + "\",";
+      json += "\"error_type\": \"" + error_type + "\",";
+      json += "\"message\": \"" + message + "\",";
+      json += "\"sent\": false";
+      json += "}";
+
+      HTTPClient http;
+      http.begin("http://192.168.1.14:8000/api/logs/add_device_log/");
+      http.setTimeout(5000);  // add timeout
+      http.addHeader("Authorization", "Token " + token);
+      http.addHeader("Content-Type", "application/json");
+
+      Serial.println("📤 Sending JSON:");
+      Serial.println(json);
+
+      int response = http.POST(json);
+      String responseBody = http.getString();
+      http.end();
+
+      Serial.print("📡 HTTP Response code: ");
+      Serial.println(response);
+      Serial.println("📥 Response body:");
+      Serial.println(responseBody);
+
+      if (response == 201) {
+        Serial.println("✅ Log sent from SD card");
+        int lastComma = lines[i].lastIndexOf(',');
+        lines[i] = lines[i].substring(0, lastComma + 1) + "true";
+      } else {
+        Serial.println("🔁 Failed to send log, keeping as false");
+      }
+    }
+  }
+
+  // حذف الملف القديم وإنشاءه من جديد
+  SD.remove("/logs.csv");
+  File writeFile = SD.open("/logs.csv", FILE_WRITE);
+  if (!writeFile) {
+    Serial.println("❌ Failed to open logs.csv for writing.");
+    return;
+  }
+
+  for (int i = 0; i < index; i++) {
+    writeFile.println(lines[i]);
+  }
+
+  writeFile.close();
+  Serial.println("💾 Updated logs.csv after sending.");
 }
 
 // Function to check for temperature and battery errors
@@ -470,10 +569,10 @@ void check_sensors(const String& device_id, const String& device_name, float tem
   }
 
   // RTC check
-   if (rtc_update_counter >= 3) {
+  if (rtc_update_counter >= 3) {
     String rtc_msg = "Time has been updated more than limits. There is something wrong with the RTC.";
     add_device_log(device_id, device_name, "rtc error", rtc_msg, token);
-    
+
     // Optionally reset the counter or keep increasing for continued logging
     rtc_update_counter = 0;
   }
