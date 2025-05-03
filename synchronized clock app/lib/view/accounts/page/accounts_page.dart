@@ -103,6 +103,7 @@ class _AccountsPageState extends State<AccountsPage> {
                             ),
                           ),
                           Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               IconButton(
                                 icon: Icon(

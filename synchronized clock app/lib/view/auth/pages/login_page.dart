@@ -46,84 +46,108 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: SizedBox(),
         centerTitle: true,
         title: Image.asset(AppStrings.logoDarkTheme, height: 40),
         backgroundColor: AppColors.backgroundColor,
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 45),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(context.lang.login, style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold)),
-            SizedBox(height: 32),
-            CustomTextField(
-              controller: usernameController,
-              hintText: context.lang.username,
-              icon: IconData(0x40),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          double screenHeight = constraints.maxHeight;
+          double screenWidth = constraints.maxWidth;
+
+          return Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: screenWidth * 0.05, // 5% of the screen width for padding
+              vertical: screenHeight * 0.1, // 10% of the screen height for vertical padding
             ),
-            SizedBox(height: 16),
-            PasswordTextField(controller: passwordController, hintText: context.lang.password),
-            Align(
-              alignment: Alignment.topRight,
-              child: TextButton(
-                onPressed: () {
-                  if (!mounted) return;
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                        title: Text(context.lang.resetPassword),
-                        content: CustomTextField(
-                          hintText: context.lang.email,
-                          controller: emailController,
-                          keyboardType: TextInputType.emailAddress,
-                        ),
-                        actions: [
-                          TextButton(
-                            onPressed: () => context.pop(),
-                            child: Text(context.lang.cancel),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              context.read<AuthCubit>().forgotPassword(emailController.text.trim());
-                              context.pop();
-                            },
-                            child: Text(context.lang.send),
-                          ),
-                        ],
-                      );
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    context.lang.login,
+                    style: TextStyle(
+                      fontSize: screenWidth > 600 ? 40 : 30, // Larger text on wider screens
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: screenHeight * 0.05), // 5% vertical space
+                  CustomTextField(
+                    controller: usernameController,
+                    hintText: context.lang.username,
+                    icon: IconData(0x40),
+                  ),
+                  SizedBox(height: screenHeight * 0.02), // 2% vertical space
+                  PasswordTextField(
+                    controller: passwordController,
+                    hintText: context.lang.password,
+                  ),
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: TextButton(
+                      onPressed: () {
+                        if (!mounted) return;
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: Text(context.lang.resetPassword),
+                              content: CustomTextField(
+                                hintText: context.lang.email,
+                                controller: emailController,
+                                keyboardType: TextInputType.emailAddress,
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => context.pop(),
+                                  child: Text(context.lang.cancel),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    context.read<AuthCubit>().forgotPassword(
+                                      emailController.text.trim(),
+                                    );
+                                    context.pop();
+                                  },
+                                  child: Text(context.lang.send),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      },
+                      style: TextButton.styleFrom(foregroundColor: AppColors.primaryColor),
+                      child: Text(context.lang.forgotPassword),
+                    ),
+                  ),
+                  SizedBox(height: screenHeight * 0.02), // 2% vertical space
+                  BlocListener<AuthCubit, AuthState>(
+                    listener: (context, state) {
+                      if (state is AuthSuccess) {
+                        context.pushAndRemoveUntil(const HomePage());
+                        showSnackBar(context, context.lang.loginSuccessful);
+                      } else if (state is AuthFailure) {
+                        showSnackBar(context, state.message);
+                      }
                     },
-                  );
-                },
-                style: TextButton.styleFrom(foregroundColor: AppColors.primaryColor),
-                child: Text(context.lang.forgotPassword),
+                    child: CustomButton(
+                      onPressed: () {
+                        context.read<AuthCubit>().login(
+                          usernameController.text.trim(),
+                          passwordController.text.trim(),
+                        );
+                      },
+                      text: context.lang.login,
+                      color: AppColors.transparentColor,
+                      borderColor: AppColors.primaryColor,
+                    ),
+                  ),
+                ],
               ),
             ),
-            SizedBox(height: 8),
-            BlocListener<AuthCubit, AuthState>(
-              listener: (context, state) {
-                if (state is AuthSuccess) {
-                  context.pushAndRemoveUntil(const HomePage());
-                  showSnackBar(context, context.lang.loginSuccessful);
-                } else if (state is AuthFailure) {
-                  showSnackBar(context, state.message);
-                }
-              },
-              child: CustomButton(
-                onPressed: () {
-                  context.read<AuthCubit>().login(
-                    usernameController.text.trim(),
-                    passwordController.text.trim(),
-                  );
-                },
-                text: context.lang.login,
-                color: AppColors.transparentColor,
-                borderColor: AppColors.primaryColor,
-              ),
-            ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }

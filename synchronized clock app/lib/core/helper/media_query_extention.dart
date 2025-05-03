@@ -5,4 +5,8 @@ extension MediaQueryExtention on BuildContext {
   double get screenWidth => MediaQuery.sizeOf(this).width;
 
   double get devicePixelRatio => MediaQuery.of(this).devicePixelRatio;
+
+  // نسبة من العرض أو الارتفاع
+  double heightPercent(double percent) => screenHeight * percent;
+  double widthPercent(double percent) => screenWidth * percent;
 }

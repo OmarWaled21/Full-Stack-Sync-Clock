@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:synchronized_clock/core/colors.dart';
 import 'package:synchronized_clock/core/helper/lang_extention.dart';
+import 'package:synchronized_clock/core/helper/media_query_extention.dart';
 import 'package:synchronized_clock/core/helper/navigator_extention.dart';
 import 'package:synchronized_clock/model/slave_clock_model.dart';
 import 'package:synchronized_clock/view/auth/widgets/custom_button.dart';
@@ -38,155 +39,164 @@ class ClockDetails extends StatelessWidget {
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8).copyWith(bottom: 0),
-        child: ListView(
+        padding: EdgeInsets.symmetric(
+          horizontal: context.widthPercent(0.04),
+          vertical: context.heightPercent(0.01),
+        ).copyWith(bottom: 0),
+        child: Column(
           children: [
-            TimeNow(),
-            SizedBox(height: 10),
-            Row(
-              children: [
-                Text(
-                  '${context.lang.version} ',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0).copyWith(left: 0),
-                  child: Text('(${clock.firmwareVersion})', style: TextStyle(fontSize: 14)),
-                ),
-                Expanded(child: Divider()),
-                if (clock.firmwareUrl != '' && clock.firmwareUrl != null)
-                  Container(
-                    padding: const EdgeInsets.all(8.0).copyWith(right: 0),
-                    width: 110,
-                    height: 50,
-                    child: CustomButton(
-                      color: AppColors.transparentColor,
-                      borderColor: AppColors.blueColor,
-                      text: context.lang.update,
-                      textStyle: TextStyle(fontSize: 14),
-                      onPressed: () {},
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    const TimeNow(),
+                    SizedBox(height: context.heightPercent(0.01)),
+                    Row(
+                      children: [
+                        Text(
+                          '${context.lang.version} ',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: context.widthPercent(0.045),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(left: 0, right: context.widthPercent(0.01)),
+                          child: Text(
+                            '(${clock.firmwareVersion})',
+                            style: TextStyle(fontSize: context.widthPercent(0.035)),
+                          ),
+                        ),
+                        const Expanded(child: Divider()),
+                        if (clock.firmwareUrl != '' && clock.firmwareUrl != null)
+                          Container(
+                            padding: EdgeInsets.only(left: context.widthPercent(0.01)),
+                            width: context.widthPercent(0.25),
+                            height: context.heightPercent(0.06),
+                            child: CustomButton(
+                              color: AppColors.transparentColor,
+                              borderColor: AppColors.blueColor,
+                              text: context.lang.update,
+                              textStyle: TextStyle(fontSize: context.widthPercent(0.03)),
+                              onPressed: () {},
+                            ),
+                          ),
+                      ],
                     ),
-                  ),
-              ],
-            ),
-            // Clock Status
-            Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0).copyWith(left: 0),
-                  child: Text(
-                    context.lang.clockStatus,
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                  ),
-                ),
-                Expanded(child: Divider()),
-              ],
-            ),
-            Card(
-              margin: const EdgeInsets.only(bottom: 10),
-              child: ListTile(
-                title: Text(context.lang.status, style: TextStyle(fontWeight: FontWeight.bold)),
-                subtitle: Text(
-                  clock.status == 'green'
-                      ? context.lang.good
-                      : clock.status == 'red'
-                      ? context.lang.error
-                      : context.lang.offline,
-                ),
-                leading: Icon(
-                  Icons.access_alarm,
-                  color:
-                      clock.status == 'green'
-                          ? AppColors.successColor
-                          : clock.status == 'red'
-                          ? AppColors.primaryColor
-                          : AppColors.darkGreyColor,
-                ),
-              ),
-            ),
-
-            // Temperature Info
-            Card(
-              margin: const EdgeInsets.only(bottom: 10),
-              child: ListTile(
-                title: Text(
-                  context.lang.temperature,
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                subtitle: Text('${clock.temperature} °C'),
-                leading: Icon(
-                  Icons.thermostat_rounded,
-                  color:
+                    SizedBox(height: context.heightPercent(0.015)),
+                    _buildSectionTitle(context.lang.clockStatus, context),
+                    _buildStatusCard(
+                      context.lang.status,
+                      _getStatusText(context),
+                      Icons.access_alarm,
+                      _getStatusColor(),
+                      context,
+                    ),
+                    _buildStatusCard(
+                      context.lang.temperature,
+                      '${clock.temperature} °C',
+                      Icons.thermostat_rounded,
                       clock.sensorError == true ? AppColors.primaryColor : AppColors.successColor,
+                      context,
+                    ),
+                    _buildStatusCard(
+                      context.lang.batteryLevel,
+                      '${clock.batteryLevel} %',
+                      Icons.battery_full,
+                      clock.lowBattery == true ? AppColors.primaryColor : AppColors.successColor,
+                      context,
+                    ),
+                    _buildStatusCard(
+                      context.lang.lastUpdate,
+                      DateFormat('yyyy-MM-dd hh:mm a').format(clock.lastUpdate ?? DateTime.now()),
+                      Icons.update,
+                      clock.rtcError == true ? AppColors.primaryColor : AppColors.successColor,
+                      context,
+                    ),
+                    SizedBox(height: context.heightPercent(0.02)),
+                  ],
                 ),
               ),
             ),
-
-            // Battery Level
-            Card(
-              margin: const EdgeInsets.only(bottom: 10),
-              child: ListTile(
-                title: Text(
-                  context.lang.batteryLevel,
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                subtitle: Text('${clock.batteryLevel} %'),
-                leading: Icon(
-                  Icons.battery_full,
-                  color: clock.lowBattery == true ? AppColors.primaryColor : AppColors.successColor,
-                ),
+            SafeArea(
+              child: CustomButton(
+                color: AppColors.primaryColor,
+                borderColor: AppColors.whiteColor,
+                text: context.lang.deleteClock,
+                onPressed: () async {
+                  bool? confirmDelete = await showDialog<bool>(
+                    context: context,
+                    builder:
+                        (context) => AlertDialog(
+                          title: Text(context.lang.deleteClock),
+                          content: Text(context.lang.confirmDeleteClock),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(context, false),
+                              child: Text(context.lang.no),
+                            ),
+                            TextButton(
+                              onPressed: () => Navigator.pop(context, true),
+                              child: Text(context.lang.yes),
+                            ),
+                          ],
+                        ),
+                  );
+                  if (confirmDelete == true) {
+                    context.read<HomeCubit>().deleteSlaveClock(deviceId: clock.deviceId);
+                    context.pop();
+                  }
+                },
               ),
             ),
-
-            // Last Update
-            Card(
-              margin: const EdgeInsets.only(bottom: 10),
-              child: ListTile(
-                title: Text(context.lang.lastUpdate, style: TextStyle(fontWeight: FontWeight.bold)),
-                subtitle: Text(
-                  DateFormat('yyyy-MM-dd hh:mm a').format(clock.lastUpdate ?? DateTime.now()),
-                ),
-                leading: Icon(
-                  Icons.update,
-                  color: clock.rtcError == true ? AppColors.primaryColor : AppColors.successColor,
-                ),
-              ),
-            ),
-            CustomButton(
-              color: AppColors.primaryColor,
-              borderColor: AppColors.whiteColor,
-              text: context.lang.deleteClock,
-              onPressed: () async {
-                // حوار تأكيد الحذف
-                bool? confirmDelete = await showDialog<bool>(
-                  context: context,
-                  builder:
-                      (context) => AlertDialog(
-                        title: Text(context.lang.deleteClock),
-                        content: Text(context.lang.confirmDeleteClock),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.pop(context, false),
-                            child: Text(context.lang.no),
-                          ),
-                          TextButton(
-                            onPressed: () => Navigator.pop(context, true),
-                            child: Text(context.lang.yes),
-                          ),
-                        ],
-                      ),
-                );
-
-                if (confirmDelete == true) {
-                  print(clock.deviceId);
-                  context.read<HomeCubit>().deleteSlaveClock(deviceId: clock.deviceId);
-                  context.pop();
-                }
-              },
-            ),
+            SizedBox(height: context.heightPercent(0.02)),
           ],
         ),
       ),
     );
+  }
+
+  Widget _buildSectionTitle(String title, BuildContext context) {
+    return Row(
+      children: [
+        Padding(
+          padding: EdgeInsets.only(right: context.widthPercent(0.02)),
+          child: Text(
+            title,
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: context.widthPercent(0.045)),
+          ),
+        ),
+        const Expanded(child: Divider()),
+      ],
+    );
+  }
+
+  Widget _buildStatusCard(
+    String title,
+    String subtitle,
+    IconData icon,
+    Color iconColor,
+    BuildContext context,
+  ) {
+    return Card(
+      margin: EdgeInsets.only(bottom: context.heightPercent(0.015)),
+      child: ListTile(
+        title: Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
+        subtitle: Text(subtitle),
+        leading: Icon(icon, color: iconColor),
+      ),
+    );
+  }
+
+  String _getStatusText(BuildContext context) {
+    if (clock.status == 'green') return context.lang.good;
+    if (clock.status == 'red') return context.lang.error;
+    return context.lang.offline;
+  }
+
+  Color _getStatusColor() {
+    if (clock.status == 'green') return AppColors.successColor;
+    if (clock.status == 'red') return AppColors.primaryColor;
+    return AppColors.darkGreyColor;
   }
 }

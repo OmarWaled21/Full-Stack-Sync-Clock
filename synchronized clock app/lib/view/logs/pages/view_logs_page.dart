@@ -23,9 +23,38 @@ class ViewLogsPage extends StatelessWidget {
         centerTitle: true,
         title: Text(
           context.lang.logs,
-          style: TextStyle(color: AppColors.whiteColor, fontWeight: FontWeight.bold),
+          style: const TextStyle(color: AppColors.whiteColor, fontWeight: FontWeight.bold),
         ),
         actions: [
+          BlocBuilder<LogsCubit, LogsState>(
+            builder: (context, state) {
+              return Row(
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.today, color: AppColors.whiteColor),
+                    onPressed: () async {
+                      final selected = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(2020),
+                        lastDate: DateTime.now(),
+                      );
+                      if (selected != null) {
+                        context.read<LogsCubit>().setFilterDate(selected);
+                      }
+                    },
+                  ),
+                  if (context.read<LogsCubit>().selectedDate != null)
+                    IconButton(
+                      icon: const Icon(Icons.calendar_today, color: Colors.white),
+                      onPressed: () {
+                        context.read<LogsCubit>().setFilterDate(null);
+                      },
+                    ),
+                ],
+              );
+            },
+          ),
           IconButton(
             onPressed: () => LogsRepo().downloadLogs(),
             icon: const Icon(Icons.download, color: AppColors.whiteColor),
@@ -50,21 +79,21 @@ class ViewLogsPage extends StatelessWidget {
               itemBuilder: (context, index) {
                 final log = logs[index];
 
-                // استخراج البطارية ودرجة الحرارة من الرسالة إذا كانت موجودة
+                // استخراج البطارية ودرجة الحرارة
                 String? bat;
                 String? temp;
 
-                final batteryRegex = RegExp(r'(\d+)%'); // لاستخراج نسبة البطارية
-                final tempRegex = RegExp(r'(\d+(\.\d+)?)\s?°?C'); // لاستخراج درجة الحرارة
+                final batteryRegex = RegExp(r'(\d+)%');
+                final tempRegex = RegExp(r'(\d+(\.\d+)?)\s?°?C');
 
                 final batteryMatch = batteryRegex.firstMatch(log.message);
                 if (batteryMatch != null) {
-                  bat = batteryMatch.group(1); // استخدم قيمة البطارية
+                  bat = batteryMatch.group(1);
                 }
 
                 final tempMatch = tempRegex.firstMatch(log.message);
                 if (tempMatch != null) {
-                  temp = tempMatch.group(1); // استخدم قيمة درجة الحرارة
+                  temp = tempMatch.group(1);
                 }
 
                 return Card(
@@ -73,35 +102,50 @@ class ViewLogsPage extends StatelessWidget {
                     side: const BorderSide(color: AppColors.primaryColor),
                   ),
                   margin: const EdgeInsets.symmetric(vertical: 6),
-                  child: ListTile(
-                    leading: const Icon(Icons.error_outline, color: Colors.redAccent),
-                    title: Text(
-                      '${AppStrings.getTranslatedErrorType(context, log.errorType)} ${log.source}',
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                    child: Row(
                       children: [
-                        Text(AppStrings.getTranslatedErrorMessage(context, log.message, bat, temp)),
-                        const SizedBox(height: 4),
-                        Align(
-                          alignment: Alignment.bottomRight,
-                          child: Text(
-                            DateFormat('yyyy-MM-dd h:mm a').format(log.timeStamp!),
-                            style: const TextStyle(fontSize: 12, color: Colors.grey),
+                        const Icon(Icons.error_outline, color: Colors.redAccent),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '${AppStrings.getTranslatedErrorType(context, log.errorType)} ${log.source}',
+                                style: const TextStyle(fontWeight: FontWeight.bold),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                AppStrings.getTranslatedErrorMessage(
+                                  context,
+                                  log.message,
+                                  bat,
+                                  temp,
+                                ),
+                                style: const TextStyle(fontSize: 14),
+                              ),
+                              const SizedBox(height: 4),
+                              Align(
+                                alignment: Alignment.bottomRight,
+                                child: Text(
+                                  DateFormat('yyyy-MM-dd h:mm a').format(log.timeStamp!),
+                                  style: const TextStyle(fontSize: 12, color: Colors.grey),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
+                        if (log.errorType == 'Sensor Error')
+                          const Icon(Icons.thermostat, color: AppColors.primaryColor)
+                        else if (log.errorType == 'Low Battery')
+                          const Icon(Icons.battery_alert, color: AppColors.primaryColor)
+                        else if (log.errorType == 'RTC Error')
+                          const Icon(Icons.timelapse_sharp, color: AppColors.primaryColor),
                       ],
                     ),
-                    isThreeLine: true,
-                    trailing:
-                        log.errorType == 'Sensor Error'
-                            ? const Icon(Icons.thermostat, color: AppColors.primaryColor)
-                            : log.errorType == 'Low Battery'
-                            ? const Icon(Icons.battery_alert, color: AppColors.primaryColor)
-                            : log.errorType == 'RTC Error'
-                            ? const Icon(Icons.timelapse_sharp, color: AppColors.primaryColor)
-                            : null,
                   ),
                 );
               },

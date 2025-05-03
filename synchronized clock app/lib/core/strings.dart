@@ -3,7 +3,7 @@ import 'package:synchronized_clock/core/helper/lang_extention.dart';
 
 class AppStrings {
   static const String appName = 'Synchronized Clock';
-  static const String baseUrl = 'http://192.168.1.3:8000/api';
+  static const String baseUrl = 'http://192.168.1.14:8000/api';
 
   static const String logo = 'assets/tomatiki_logo.png';
   static const String logoDarkTheme = 'assets/tomatiki_logo_dark_theme.png';

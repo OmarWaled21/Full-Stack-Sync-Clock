@@ -63,105 +63,122 @@ class _AddAccountPageState extends State<AddAccountPage> {
         title: Image.asset(AppStrings.logoDarkTheme, height: 40),
         backgroundColor: AppColors.backgroundColor,
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 35).copyWith(bottom: 0),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                context.lang.addAccount,
-                style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 32),
-              Row(
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          double screenWidth = constraints.maxWidth;
+          double screenHeight = constraints.maxHeight;
+
+          return Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: screenWidth * 0.05, // 5% padding on both sides
+              vertical: screenHeight * 0.05, // 5% padding from top and bottom
+            ),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  SizedBox(
-                    width: 160,
-                    child: CustomTextField(
-                      controller: firstNameController,
-                      hintText: context.lang.firstName,
-                      icon: Icons.person,
+                  Text(
+                    context.lang.addAccount,
+                    style: TextStyle(
+                      fontSize: screenWidth > 600 ? 40 : 30, // Larger text for bigger screens
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(width: 6),
-                  SizedBox(
-                    width: 160,
-                    child: CustomTextField(
-                      controller: lastNameController,
-                      hintText: context.lang.lastName,
-                      icon: Icons.person,
-                    ),
+                  SizedBox(height: screenHeight * 0.05), // Space based on screen size
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      SizedBox(
+                        width: screenWidth * 0.45, // Dynamic width for small and large screens
+                        child: CustomTextField(
+                          controller: firstNameController,
+                          hintText: context.lang.firstName,
+                          icon: Icons.person,
+                        ),
+                      ),
+                      SizedBox(
+                        width: screenWidth * 0.45, // Dynamic width for small and large screens
+                        child: CustomTextField(
+                          controller: lastNameController,
+                          hintText: context.lang.lastName,
+                          icon: Icons.person,
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-              SizedBox(height: 16),
-              CustomTextField(
-                controller: usernameController,
-                hintText: context.lang.username,
-                icon: IconData(0x40),
-              ),
-              SizedBox(height: 16),
-              CustomTextField(
-                controller: emailController,
-                hintText: context.lang.email,
-                icon: IconData(0x40),
-              ),
-              SizedBox(height: 16),
-              PasswordTextField(controller: passwordController, hintText: context.lang.password),
-              SizedBox(height: 16),
-              DropdownButtonFormField<String>(
-                value: _selectedRole,
-                decoration: InputDecoration(
-                  labelText: context.lang.selectRole,
-                  border: OutlineInputBorder(),
-                  contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                ),
-                items: [
-                  DropdownMenuItem(value: 'user', child: Text(context.lang.user)),
-                  DropdownMenuItem(value: 'supervisor', child: Text(context.lang.supervisor)),
-                ],
-                onChanged: (value) {
-                  if (value != null) {
-                    setState(() {
-                      _selectedRole = value;
-                    });
-                  }
-                },
-              ),
-              SizedBox(height: 16),
-              BlocListener<AuthCubit, AuthState>(
-                listener: (context, state) {
-                  if (state is AuthSuccess) {
-                    context.pushAndRemoveUntil(const HomePage());
-                    showSnackBar(context, context.lang.registrationSuccess);
-                  } else if (state is AuthFailure) {
-                    showSnackBar(context, state.message);
-                  }
-                },
-                child: BlocProvider(
-                  create: (context) => AccountsCubit(AccountsRepo()),
-                  child: CustomButton(
-                    onPressed: () {
-                      context.read<AccountsCubit>().addUser(
-                        firstName: firstNameController.text,
-                        lastName: lastNameController.text,
-                        username: usernameController.text,
-                        email: emailController.text,
-                        rule: 'user',
-                        password: passwordController.text,
-                      );
-                      context.pop();
+                  SizedBox(height: screenHeight * 0.02), // Space based on screen size
+                  CustomTextField(
+                    controller: usernameController,
+                    hintText: context.lang.username,
+                    icon: IconData(0x40),
+                  ),
+                  SizedBox(height: screenHeight * 0.02), // Space based on screen size
+                  CustomTextField(
+                    controller: emailController,
+                    hintText: context.lang.email,
+                    icon: IconData(0x40),
+                  ),
+                  SizedBox(height: screenHeight * 0.02), // Space based on screen size
+                  PasswordTextField(
+                    controller: passwordController,
+                    hintText: context.lang.password,
+                  ),
+                  SizedBox(height: screenHeight * 0.02), // Space based on screen size
+                  DropdownButtonFormField<String>(
+                    value: _selectedRole,
+                    decoration: InputDecoration(
+                      labelText: context.lang.selectRole,
+                      border: OutlineInputBorder(),
+                      contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                    ),
+                    items: [
+                      DropdownMenuItem(value: 'user', child: Text(context.lang.user)),
+                      DropdownMenuItem(value: 'supervisor', child: Text(context.lang.supervisor)),
+                    ],
+                    onChanged: (value) {
+                      if (value != null) {
+                        setState(() {
+                          _selectedRole = value;
+                        });
+                      }
                     },
-                    text: context.lang.addAccount,
-                    color: AppColors.transparentColor,
-                    borderColor: AppColors.blueColor,
                   ),
-                ),
+                  SizedBox(height: screenHeight * 0.02), // Space based on screen size
+                  BlocListener<AuthCubit, AuthState>(
+                    listener: (context, state) {
+                      if (state is AuthSuccess) {
+                        context.pushAndRemoveUntil(const HomePage());
+                        showSnackBar(context, context.lang.registrationSuccess);
+                      } else if (state is AuthFailure) {
+                        showSnackBar(context, state.message);
+                      }
+                    },
+                    child: BlocProvider(
+                      create: (context) => AccountsCubit(AccountsRepo()),
+                      child: CustomButton(
+                        onPressed: () {
+                          context.read<AccountsCubit>().addUser(
+                            firstName: firstNameController.text,
+                            lastName: lastNameController.text,
+                            username: usernameController.text,
+                            email: emailController.text,
+                            rule: 'user',
+                            password: passwordController.text,
+                          );
+                          context.pop();
+                        },
+                        text: context.lang.addAccount,
+                        color: AppColors.transparentColor,
+                        borderColor: AppColors.blueColor,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: screenHeight * 0.02), // Space based on screen size
+                ],
               ),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
     );
   }

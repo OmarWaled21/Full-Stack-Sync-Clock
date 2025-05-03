@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:synchronized_clock/core/colors.dart';
 import 'package:synchronized_clock/core/helper/lang_extention.dart';
+import 'package:synchronized_clock/core/helper/media_query_extention.dart';
 import 'package:synchronized_clock/view/home/widgets/custom_drawer.dart';
 import 'package:synchronized_clock/view/home/widgets/device_overview.dart';
 import 'package:synchronized_clock/view/home/widgets/slave_clocks_list.dart';
@@ -9,68 +10,84 @@ import 'package:synchronized_clock/view/home/widgets/time_now.dart';
 import 'package:synchronized_clock/view_model/home_cubit/home_cubit.dart';
 
 class HomePage extends StatelessWidget {
-  // Add a GlobalKey for ScaffoldState
-
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+    final scaffoldKey = GlobalKey<ScaffoldState>();
+    final width = context.screenWidth;
+
     return Scaffold(
-      key: scaffoldKey, // Set the key here
+      key: scaffoldKey,
       appBar: AppBar(
         centerTitle: true,
         title: Text(
           context.lang.synchronized_clock,
-          style: TextStyle(color: AppColors.whiteColor, fontWeight: FontWeight.bold),
+          style: const TextStyle(color: AppColors.whiteColor, fontWeight: FontWeight.bold),
         ),
         backgroundColor: AppColors.backgroundColor,
         actions: [
           IconButton(
             onPressed: () {
-              // Open the endDrawer using the ScaffoldState key
               scaffoldKey.currentState?.openEndDrawer();
             },
-            icon: Icon(Icons.menu, color: AppColors.whiteColor),
+            icon: const Icon(Icons.menu, color: AppColors.whiteColor),
           ),
         ],
       ),
-      endDrawer: CustomDrawer(),
+      endDrawer: const CustomDrawer(),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8).copyWith(bottom: 0),
+        padding: EdgeInsets.symmetric(
+          horizontal: width > 600 ? 32 : 16,
+          vertical: 8,
+        ).copyWith(bottom: 0),
         child: SingleChildScrollView(
           child: Column(
             children: [
               Text(
                 context.lang.master_clock,
-                style: TextStyle(fontSize: 30, color: AppColors.backgroundColor),
+                style: TextStyle(
+                  fontSize: width > 600 ? 36 : 28,
+                  color: AppColors.backgroundColor,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
-              TimeNow(),
-              // Device overview
+              const SizedBox(height: 8),
+              const TimeNow(),
+              const SizedBox(height: 16),
               BlocBuilder<HomeCubit, HomeState>(
                 builder: (context, state) {
                   if (state is HomeSuccess) {
-                    // Get device stats from the cubit
                     final stats = context.read<HomeCubit>().getDeviceStats();
                     final slaveClocks = state.slavesClocks;
+
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         DeviceOverview(stats: stats),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
                         Text(
                           context.lang.slave_clocks,
                           style: TextStyle(
-                            fontSize: 18,
+                            fontSize: width > 600 ? 22 : 18,
                             color: AppColors.backgroundColor,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        SlaveClocksGridView(slaveClocks: slaveClocks),
+                        const SizedBox(height: 8),
+                        SlaveClocksGridView(
+                          slaveClocks: slaveClocks,
+                          crossAxisCount:
+                              width > 1000
+                                  ? 4
+                                  : width > 700
+                                  ? 3
+                                  : 2,
+                        ),
                       ],
                     );
                   }
-                  return Center(child: CircularProgressIndicator());
+                  return const Center(child: CircularProgressIndicator());
                 },
               ),
             ],

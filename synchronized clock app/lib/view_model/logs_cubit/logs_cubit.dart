@@ -9,6 +9,7 @@ part 'logs_state.dart';
 
 class LogsCubit extends Cubit<LogsState> {
   final LogsRepo logsRepo;
+  DateTime? selectedDate;
 
   LogsCubit(this.logsRepo) : super(LogsInitial());
 
@@ -48,6 +49,21 @@ class LogsCubit extends Cubit<LogsState> {
     } catch (e) {
       emit(LogsDownloadError('Failed to download PDF: $e'));
     }
+  }
+
+  void setFilterDate(DateTime? date) async {
+    selectedDate = date;
+    final logs = await logsRepo.getLogs();
+    emit(
+      LogsLoaded(
+        logs.where((log) {
+          if (date == null) return true;
+          final logDate = DateTime(log.timeStamp!.year, log.timeStamp!.month, log.timeStamp!.day);
+          final filterDate = DateTime(date.year, date.month, date.day);
+          return logDate == filterDate;
+        }).toList(),
+      ),
+    );
   }
 
   // Save logs to SharedPreferences

@@ -30,141 +30,142 @@ class CustomDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final user = context.read<AuthCubit>().currentUser!;
     return Drawer(
       width: context.screenWidth * 0.7,
-      child: Column(
-        children: <Widget>[
-          DrawerHeader(
-            decoration: BoxDecoration(color: AppColors.backgroundColor),
-            child: Container(
-              width: context.screenWidth * 0.7,
-              color: AppColors.backgroundColor,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Image.asset('assets/tomatiki_logo_dark_theme.png', width: 200),
-                  Text(
-                    '${context.lang.welcome} ${context.read<AuthCubit>().currentUser!.username}',
-                    style: TextStyle(
-                      color: AppColors.whiteColor,
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          // Main body of the drawer
-          Column(
+      backgroundColor: AppColors.backgroundColor,
+      child: SafeArea(
+        child: Container(
+          color: AppColors.whiteColor,
+          child: Column(
             children: [
-              if (context.read<AuthCubit>().currentUser!.rule == 'admin')
-                Column(
+              // الجزء القابل للتمرير
+              Expanded(
+                child: ListView(
+                  padding: EdgeInsets.zero,
                   children: [
-                    ListTile(
-                      leading: Icon(Icons.person),
-                      title: Text(context.lang.users),
-                      onTap: () {
-                        context.push(
-                          BlocProvider(
-                            create: (context) => AccountsCubit(AccountsRepo())..fetchUsers(),
-                            child: AccountsPage(),
+                    DrawerHeader(
+                      decoration: BoxDecoration(color: AppColors.backgroundColor),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Image.asset('assets/tomatiki_logo_dark_theme.png', width: 200),
+                          Text(
+                            '${context.lang.welcome} ${user.username}',
+                            style: TextStyle(
+                              color: AppColors.whiteColor,
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        );
+                        ],
+                      ),
+                    ),
+                    if (user.rule == 'admin') ...[
+                      ListTile(
+                        leading: Icon(Icons.person),
+                        title: Text(context.lang.users),
+                        onTap: () {
+                          context.push(
+                            BlocProvider(
+                              create: (context) => AccountsCubit(AccountsRepo())..fetchUsers(),
+                              child: AccountsPage(),
+                            ),
+                          );
+                        },
+                      ),
+                      ListTile(
+                        leading: Icon(Icons.add),
+                        title: Text(context.lang.addDevice),
+                        onTap: () {
+                          context.push(
+                            MultiBlocProvider(
+                              providers: [
+                                BlocProvider(
+                                  create: (context) => BluetoothCubit()..initializeBluetooth(),
+                                ),
+                                BlocProvider(create: (context) => AddDeviceCubit(AddDeivceRepo())),
+                              ],
+                              child: BluetoothScanScreen(),
+                            ),
+                          );
+                        },
+                      ),
+                      ListTile(
+                        leading: Icon(Icons.message),
+                        title: Text(context.lang.messages),
+                        onTap: () {
+                          context.push(
+                            BlocProvider(
+                              create: (context) => MessagesCubit(),
+                              child: const EnableMessages(),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                    if (user.rule != 'user') ...[
+                      ListTile(
+                        leading: Icon(Icons.insert_drive_file_outlined),
+                        title: Text(context.lang.logs),
+                        onTap: () {
+                          context.push(
+                            BlocProvider(
+                              create: (context) => LogsCubit(LogsRepo())..fetchLogs(),
+                              child: const ViewLogsPage(),
+                            ),
+                          );
+                        },
+                      ),
+                      ListTile(
+                        leading: Icon(Icons.timer_sharp),
+                        title: Text(context.lang.edit_time),
+                        onTap: () {
+                          context.push(
+                            BlocProvider(
+                              create: (context) => MasterClockCubit(HomeRepo())..startClock(),
+                              child: EditMasterClock(),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                    ListTile(
+                      leading: Icon(Icons.support_agent),
+                      title: Text(context.lang.supports),
+                      onTap: () {
+                        context.push(SupportPage());
                       },
                     ),
                     ListTile(
-                      leading: Icon(Icons.add),
-                      title: Text(context.lang.addDevice),
+                      leading: Icon(Icons.translate),
+                      title: Text(context.lang.language),
                       onTap: () {
-                        context.push(
-                          MultiBlocProvider(
-                            providers: [
-                              BlocProvider(
-                                create: (context) => BluetoothCubit()..initializeBluetooth(),
-                              ),
-                              BlocProvider(create: (context) => AddDeviceCubit(AddDeivceRepo())),
-                            ],
-                            child: BluetoothScanScreen(),
-                          ),
-                        );
-                      },
-                    ),
-                    ListTile(
-                      leading: Icon(Icons.message),
-                      title: Text(context.lang.messages),
-                      onTap: () {
-                        context.push(
-                          BlocProvider(
-                            create: (context) => MessagesCubit(),
-                            child: const EnableMessages(),
-                          ),
+                        showDialog(
+                          context: context,
+                          builder: (context) => LanguageSelectionDialog(),
                         );
                       },
                     ),
                   ],
                 ),
-              if (context.read<AuthCubit>().currentUser!.rule != 'user')
-                Column(
-                  children: [
-                    ListTile(
-                      leading: Icon(Icons.insert_drive_file_outlined),
-                      title: Text(context.lang.logs),
-                      onTap: () {
-                        context.push(
-                          BlocProvider(
-                            create: (context) => LogsCubit(LogsRepo())..fetchLogs(),
-                            child: const ViewLogsPage(),
-                          ),
-                        );
-                      },
-                    ),
-                    ListTile(
-                      leading: Icon(Icons.timer_sharp),
-                      title: Text(context.lang.edit_time),
-                      onTap: () {
-                        context.push(
-                          BlocProvider(
-                            create: (context) => MasterClockCubit(HomeRepo())..startClock(),
-                            child: EditMasterClock(),
-                          ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              ListTile(
-                leading: Icon(Icons.support_agent),
-                title: Text(context.lang.supports),
-                onTap: () {
-                  context.push(SupportPage());
-                },
               ),
-              ListTile(
-                leading: Icon(Icons.translate),
-                title: Text(context.lang.language), // أو أي ترجمة مناسبة
-                onTap: () {
-                  showDialog(context: context, builder: (context) => LanguageSelectionDialog());
-                },
+              // الزر الثابت في الأسفل
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: CustomButton(
+                  color: AppColors.primaryColor,
+                  borderColor: AppColors.whiteColor,
+                  text: context.lang.logout,
+                  onPressed: () {
+                    context.read<AuthCubit>().logout();
+                    context.push(LoginPage());
+                  },
+                ),
               ),
             ],
           ),
-          // Spacer to push the logout button to the bottom of the drawer
-          Spacer(),
-          // Logout button at the bottom
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: CustomButton(
-              color: AppColors.primaryColor,
-              borderColor: AppColors.whiteColor,
-              text: context.lang.logout,
-              onPressed: () {
-                context.read<AuthCubit>().logout();
-                context.push(LoginPage());
-              },
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
