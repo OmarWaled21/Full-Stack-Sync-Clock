@@ -22,14 +22,14 @@ class HomeCubit extends Cubit<HomeState> {
   Future<void> getAllSlaveClock() async {
     try {
       final slaveClocks = await homeRepo.getAllSlaveClock();
-      print('Fetched Slave Clocks: $slaveClocks');
+      debugPrint('Fetched Slave Clocks: $slaveClocks');
       if (slaveClocks != null) {
         for (var clock in slaveClocks) {
           if (clock.lastCalibration != null) {
             checkCalibrationReminder(clock.lastCalibration!);
           } else {
             // ممكن تعتبره محتاج calibration لو مفيش تاريخ
-            print('${clock.deviceId} has no calibration date.');
+            debugPrint('${clock.deviceId} has no calibration date.');
           }
         }
 
@@ -48,7 +48,7 @@ class HomeCubit extends Cubit<HomeState> {
         emit(HomeSuccess([]));
       }
     } catch (e) {
-      print('Error in Cubit: $e');
+      debugPrint('Error in Cubit: $e');
       emit(HomeFailure(e.toString()));
     }
   }
@@ -63,7 +63,7 @@ class HomeCubit extends Cubit<HomeState> {
       await homeRepo.editSlaveClock(deviceId, name, maxTempThreshold, minTempThreshold);
       getAllSlaveClock();
     } catch (e) {
-      print('Error in Cubit: $e');
+      debugPrint('Error in Cubit: $e');
       emit(HomeFailure(e.toString()));
     }
   }
@@ -73,7 +73,7 @@ class HomeCubit extends Cubit<HomeState> {
       await homeRepo.deleteSlaveClock(deviceId);
       getAllSlaveClock();
     } catch (e) {
-      print('Error in Cubit: $e');
+      debugPrint('Error in Cubit: $e');
       emit(HomeFailure(e.toString()));
     }
   }
@@ -86,7 +86,7 @@ class HomeCubit extends Cubit<HomeState> {
     // أول استدعاء فورًا
     getAllSlaveClock();
     // ثم كل دقيقة
-    _timer = Timer.periodic(Duration(seconds: 10), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 10), (timer) {
       getAllSlaveClock();
     });
   }
@@ -105,7 +105,7 @@ class HomeCubit extends Cubit<HomeState> {
         title: '🔧 Calibration Needed',
         body: 'Devices requires calibration.',
       );
-      print('Calibration Reminder');
+      debugPrint('Calibration Reminder');
     }
   }
 

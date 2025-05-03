@@ -31,7 +31,7 @@ class _AccountsPageState extends State<AccountsPage> {
         centerTitle: true,
         title: Text(
           context.lang.users,
-          style: TextStyle(color: AppColors.whiteColor, fontWeight: FontWeight.bold),
+          style: const TextStyle(color: AppColors.whiteColor, fontWeight: FontWeight.bold),
         ),
       ),
       body: Column(
@@ -155,7 +155,7 @@ class _AccountsPageState extends State<AccountsPage> {
                   context.push(
                     BlocProvider.value(
                       value: context.read<AccountsCubit>(),
-                      child: AddAccountPage(),
+                      child: const AddAccountPage(),
                     ),
                   );
                 },

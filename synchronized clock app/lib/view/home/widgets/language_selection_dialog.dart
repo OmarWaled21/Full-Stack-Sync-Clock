@@ -10,11 +10,11 @@ class LanguageSelectionDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text(context.lang.language), // "Select Language"
-      content: Column(
+      content: const Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _LanguageOption(label: 'English', locale: const Locale('en')),
-          _LanguageOption(label: 'العربية', locale: const Locale('ar')),
+          _LanguageOption(label: 'English', locale: Locale('en')),
+          _LanguageOption(label: 'العربية', locale: Locale('ar')),
         ],
       ),
     );

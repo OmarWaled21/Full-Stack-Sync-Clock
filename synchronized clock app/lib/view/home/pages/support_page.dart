@@ -18,7 +18,7 @@ class SupportPage extends StatelessWidget {
         ),
         title: Text(
           context.lang.supports,
-          style: TextStyle(color: AppColors.whiteColor, fontWeight: FontWeight.bold),
+          style: const TextStyle(color: AppColors.whiteColor, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         backgroundColor: AppColors.backgroundColor,

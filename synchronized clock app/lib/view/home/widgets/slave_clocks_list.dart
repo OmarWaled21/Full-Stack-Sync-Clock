@@ -13,7 +13,7 @@ class SlaveClocksGridView extends StatelessWidget {
     final aspectRatio = context.screenWidth / (context.screenHeight * 0.5);
     return GridView.count(
       shrinkWrap: true, // مهم لتجنب مشاكل التخطيط
-      physics: NeverScrollableScrollPhysics(),
+      physics: const NeverScrollableScrollPhysics(),
       crossAxisCount: crossAxisCount,
       childAspectRatio: aspectRatio.clamp(0.5, 1.5),
       children:

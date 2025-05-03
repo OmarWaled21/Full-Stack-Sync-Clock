@@ -110,13 +110,13 @@ class _AddAccountPageState extends State<AddAccountPage> {
                   CustomTextField(
                     controller: usernameController,
                     hintText: context.lang.username,
-                    icon: IconData(0x40),
+                    icon: const IconData(0x40),
                   ),
                   SizedBox(height: screenHeight * 0.02), // Space based on screen size
                   CustomTextField(
                     controller: emailController,
                     hintText: context.lang.email,
-                    icon: IconData(0x40),
+                    icon: const IconData(0x40),
                   ),
                   SizedBox(height: screenHeight * 0.02), // Space based on screen size
                   PasswordTextField(
@@ -128,8 +128,8 @@ class _AddAccountPageState extends State<AddAccountPage> {
                     value: _selectedRole,
                     decoration: InputDecoration(
                       labelText: context.lang.selectRole,
-                      border: OutlineInputBorder(),
-                      contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                      border: const OutlineInputBorder(),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                     ),
                     items: [
                       DropdownMenuItem(value: 'user', child: Text(context.lang.user)),

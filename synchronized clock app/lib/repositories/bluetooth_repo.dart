@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
+import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -69,16 +70,16 @@ class BluetoothRepo {
       (Uint8List data) {
         final chunk = utf8.decode(data);
         buffer += chunk;
-        print('Received chunk: $chunk');
+        debugPrint('Received chunk: $chunk');
 
         if (buffer.contains('\n')) {
           final line = buffer.split('\n').first.trim(); // خد أول سطر
-          print('Parsed line: $line');
+          debugPrint('Parsed line: $line');
           completer.complete(line);
         }
       },
       onError: (err) {
-        print('Error: $err');
+        debugPrint('Error: $err');
         completer.completeError(err);
       },
     );

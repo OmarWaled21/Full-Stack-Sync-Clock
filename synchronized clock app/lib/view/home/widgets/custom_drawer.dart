@@ -45,14 +45,14 @@ class CustomDrawer extends StatelessWidget {
                   padding: EdgeInsets.zero,
                   children: [
                     DrawerHeader(
-                      decoration: BoxDecoration(color: AppColors.backgroundColor),
+                      decoration: const BoxDecoration(color: AppColors.backgroundColor),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Image.asset('assets/tomatiki_logo_dark_theme.png', width: 200),
                           Text(
                             '${context.lang.welcome} ${user.username}',
-                            style: TextStyle(
+                            style: const TextStyle(
                               color: AppColors.whiteColor,
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
@@ -63,19 +63,19 @@ class CustomDrawer extends StatelessWidget {
                     ),
                     if (user.rule == 'admin') ...[
                       ListTile(
-                        leading: Icon(Icons.person),
+                        leading: const Icon(Icons.person),
                         title: Text(context.lang.users),
                         onTap: () {
                           context.push(
                             BlocProvider(
                               create: (context) => AccountsCubit(AccountsRepo())..fetchUsers(),
-                              child: AccountsPage(),
+                              child: const AccountsPage(),
                             ),
                           );
                         },
                       ),
                       ListTile(
-                        leading: Icon(Icons.add),
+                        leading: const Icon(Icons.add),
                         title: Text(context.lang.addDevice),
                         onTap: () {
                           context.push(
@@ -86,13 +86,13 @@ class CustomDrawer extends StatelessWidget {
                                 ),
                                 BlocProvider(create: (context) => AddDeviceCubit(AddDeivceRepo())),
                               ],
-                              child: BluetoothScanScreen(),
+                              child: const BluetoothScanScreen(),
                             ),
                           );
                         },
                       ),
                       ListTile(
-                        leading: Icon(Icons.message),
+                        leading: const Icon(Icons.message),
                         title: Text(context.lang.messages),
                         onTap: () {
                           context.push(
@@ -106,7 +106,7 @@ class CustomDrawer extends StatelessWidget {
                     ],
                     if (user.rule != 'user') ...[
                       ListTile(
-                        leading: Icon(Icons.insert_drive_file_outlined),
+                        leading: const Icon(Icons.insert_drive_file_outlined),
                         title: Text(context.lang.logs),
                         onTap: () {
                           context.push(
@@ -118,32 +118,32 @@ class CustomDrawer extends StatelessWidget {
                         },
                       ),
                       ListTile(
-                        leading: Icon(Icons.timer_sharp),
+                        leading: const Icon(Icons.timer_sharp),
                         title: Text(context.lang.edit_time),
                         onTap: () {
                           context.push(
                             BlocProvider(
                               create: (context) => MasterClockCubit(HomeRepo())..startClock(),
-                              child: EditMasterClock(),
+                              child: const EditMasterClock(),
                             ),
                           );
                         },
                       ),
                     ],
                     ListTile(
-                      leading: Icon(Icons.support_agent),
+                      leading: const Icon(Icons.support_agent),
                       title: Text(context.lang.supports),
                       onTap: () {
-                        context.push(SupportPage());
+                        context.push(const SupportPage());
                       },
                     ),
                     ListTile(
-                      leading: Icon(Icons.translate),
+                      leading: const Icon(Icons.translate),
                       title: Text(context.lang.language),
                       onTap: () {
                         showDialog(
                           context: context,
-                          builder: (context) => LanguageSelectionDialog(),
+                          builder: (context) => const LanguageSelectionDialog(),
                         );
                       },
                     ),
@@ -159,7 +159,7 @@ class CustomDrawer extends StatelessWidget {
                   text: context.lang.logout,
                   onPressed: () {
                     context.read<AuthCubit>().logout();
-                    context.push(LoginPage());
+                    context.push(const LoginPage());
                   },
                 ),
               ),

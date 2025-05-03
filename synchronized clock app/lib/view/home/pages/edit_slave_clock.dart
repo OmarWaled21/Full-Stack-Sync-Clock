@@ -45,11 +45,11 @@ class _EditClockState extends State<EditClock> {
       appBar: AppBar(
         leading: IconButton(
           onPressed: () => context.pop(),
-          icon: Icon(Icons.arrow_back_ios_new, color: AppColors.whiteColor),
+          icon: const Icon(Icons.arrow_back_ios_new, color: AppColors.whiteColor),
         ),
         title: Text(
           '${context.lang.edit} ${context.lang.slave_clocks}',
-          style: TextStyle(color: AppColors.whiteColor),
+          style: const TextStyle(color: AppColors.whiteColor),
         ),
         centerTitle: true,
         backgroundColor: AppColors.backgroundColor,
@@ -62,7 +62,10 @@ class _EditClockState extends State<EditClock> {
             Card(
               margin: const EdgeInsets.only(bottom: 10),
               child: ListTile(
-                title: Text(context.lang.clockName, style: TextStyle(fontWeight: FontWeight.bold)),
+                title: Text(
+                  context.lang.clockName,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
                 subtitle: CustomTextField(
                   controller: _nameController,
                   hintText: '${context.lang.enter} ${context.lang.clockName}',
@@ -76,7 +79,7 @@ class _EditClockState extends State<EditClock> {
               child: ListTile(
                 title: Text(
                   '${context.lang.max} ${context.lang.temperature}',
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                  style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
                 subtitle: CustomTextField(
                   controller: _maxTempController,
@@ -92,7 +95,7 @@ class _EditClockState extends State<EditClock> {
               child: ListTile(
                 title: Text(
                   '${context.lang.min} ${context.lang.temperature}',
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                  style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
                 subtitle: CustomTextField(
                   controller: _minTempController,
@@ -113,7 +116,7 @@ class _EditClockState extends State<EditClock> {
                     maxTempThreshold: double.parse(_maxTempController.text),
                     minTempThreshold: double.parse(_minTempController.text),
                   );
-                  context.pushAndRemoveUntil(HomePage());
+                  context.pushAndRemoveUntil(const HomePage());
                 },
                 borderColor: AppColors.successColor,
                 text: context.lang.save,

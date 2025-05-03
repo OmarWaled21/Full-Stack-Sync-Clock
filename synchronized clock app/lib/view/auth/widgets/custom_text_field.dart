@@ -28,8 +28,8 @@ class CustomTextField extends StatelessWidget {
             Container(
               width: 50,
               height: 50,
-              decoration: BoxDecoration(
-                borderRadius: const BorderRadius.only(
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(50),
                   bottomLeft: Radius.circular(50),
                 ),

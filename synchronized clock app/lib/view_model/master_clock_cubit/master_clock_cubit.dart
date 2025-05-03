@@ -28,7 +28,7 @@ class MasterClockCubit extends Cubit<MasterClockState> {
         emit(MasterClockUpdated(getCurrentTime()));
       }
     } catch (e) {
-      print('Error fetching master clock: $e');
+      debugPrint('Error fetching master clock: $e');
       emit(MasterClockError(e.toString()));
     }
   }
@@ -38,20 +38,20 @@ class MasterClockCubit extends Cubit<MasterClockState> {
       await homeRepo.editMasterClock(time);
       getMasterClock();
     } catch (e) {
-      print('Error in Cubit: $e');
+      debugPrint('Error in Cubit: $e');
       if (!isClosed) emit(MasterClockError(e.toString()));
     }
   }
 
   void startClock() async {
     await getMasterClock();
-    _timer = Timer.periodic(Duration(seconds: 1), (_) {
+    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
       if (isClosed) return;
       emit(MasterClockUpdated(getCurrentTime()));
     });
 
     // تحديث الساعة كل 5 ثواني للتحقق من التعديلات
-    _refreshTimer = Timer.periodic(Duration(seconds: 5), (_) {
+    _refreshTimer = Timer.periodic(const Duration(seconds: 5), (_) {
       getMasterClock();
     });
   }

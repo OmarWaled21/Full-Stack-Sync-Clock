@@ -26,12 +26,12 @@ class AppLocalization {
 
   // دالة لبناء اللغات المدعومة
   static List<Locale> supportedLocales() {
-    return [Locale('en', 'US'), Locale('ar', 'EG')];
+    return [const Locale('en', 'US'), const Locale('ar', 'EG')];
   }
 
   // دالة لبناء الـ LocalizationsDelegate
   static LocalizationsDelegate<AppLocalization> delegate() {
-    return _AppLocalizationDelegate();
+    return const _AppLocalizationDelegate();
   }
 }
 

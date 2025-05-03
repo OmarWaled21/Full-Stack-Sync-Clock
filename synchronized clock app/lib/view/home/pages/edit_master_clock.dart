@@ -29,7 +29,7 @@ class _EditMasterClockState extends State<EditMasterClock> {
         ),
         title: Text(
           context.lang.editMasterClock,
-          style: TextStyle(color: AppColors.whiteColor, fontWeight: FontWeight.bold),
+          style: const TextStyle(color: AppColors.whiteColor, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         backgroundColor: AppColors.backgroundColor,
@@ -43,7 +43,7 @@ class _EditMasterClockState extends State<EditMasterClock> {
               children: [
                 Text(
                   '${context.lang.selectDateAndTime}:',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 10),
                 // حقل لاختيار التاريخ والوقت

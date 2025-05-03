@@ -46,7 +46,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: SizedBox(),
+        leading: const SizedBox(),
         centerTitle: true,
         title: Image.asset(AppStrings.logoDarkTheme, height: 40),
         backgroundColor: AppColors.backgroundColor,
@@ -76,7 +76,7 @@ class _LoginPageState extends State<LoginPage> {
                   CustomTextField(
                     controller: usernameController,
                     hintText: context.lang.username,
-                    icon: IconData(0x40),
+                    icon: const IconData(0x40),
                   ),
                   SizedBox(height: screenHeight * 0.02), // 2% vertical space
                   PasswordTextField(

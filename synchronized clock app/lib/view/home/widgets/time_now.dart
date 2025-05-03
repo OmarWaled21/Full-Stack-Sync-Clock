@@ -24,7 +24,7 @@ class TimeNow extends StatelessWidget {
                 ),
                 Text(
                   DateFormat('h:mm:ss a').format(currentTime),
-                  style: TextStyle(fontSize: 30, color: AppColors.backgroundColor),
+                  style: const TextStyle(fontSize: 30, color: AppColors.backgroundColor),
                 ),
               ],
             );
@@ -35,7 +35,10 @@ class TimeNow extends StatelessWidget {
                   'Loading...',
                   style: TextStyle(fontSize: 20, color: AppColors.backgroundColor.withAlpha(150)),
                 ),
-                Text('--:--:--', style: TextStyle(fontSize: 30, color: AppColors.backgroundColor)),
+                const Text(
+                  '--:--:--',
+                  style: TextStyle(fontSize: 30, color: AppColors.backgroundColor),
+                ),
               ],
             );
           }

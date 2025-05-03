@@ -11,10 +11,10 @@ class DeviceOverview extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
         Text(
           context.lang.deviceOverview,
-          style: TextStyle(fontSize: 18, color: AppColors.backgroundColor),
+          style: const TextStyle(fontSize: 18, color: AppColors.backgroundColor),
         ),
         Wrap(
           alignment: WrapAlignment.start,

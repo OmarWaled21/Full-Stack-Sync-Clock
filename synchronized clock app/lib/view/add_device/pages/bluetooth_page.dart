@@ -64,7 +64,7 @@ class _BluetoothScanScreenState extends State<BluetoothScanScreen> {
                   _buildBluetoothButton(context, isDiscovering),
                   Expanded(
                     child: Card(
-                      shape: RoundedRectangleBorder(
+                      shape: const RoundedRectangleBorder(
                         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
                         side: BorderSide(color: AppColors.blueColor),
                       ),

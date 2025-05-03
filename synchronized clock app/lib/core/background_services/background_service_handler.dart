@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:ui';
+import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:synchronized_clock/core/messaging/notification_service.dart';
@@ -39,12 +40,12 @@ class BackgroundServiceHandler {
     });
 
     Timer.periodic(const Duration(seconds: 5), (timer) async {
-      print("⏳ Checking logs in the background...");
+      debugPrint("⏳ Checking logs in the background...");
       await checkNewLogs();
     });
 
     Timer.periodic(const Duration(days: 180), (timer) async {
-      print("⏳ Updating server time in background...");
+      debugPrint("⏳ Updating server time in background...");
       await checkCalibration();
     });
   }
@@ -73,9 +74,9 @@ class BackgroundServiceHandler {
         }
       }
 
-      print('✅ Calibration check completed');
+      debugPrint('✅ Calibration check completed');
     } catch (e) {
-      print('❌ Error checking calibration: $e');
+      debugPrint('❌ Error checking calibration: $e');
     }
   }
 
@@ -102,7 +103,7 @@ class BackgroundServiceHandler {
       // 🟢 Save logs regardless (even if no notification was shown)
       await _saveLogs(newLogs);
     } catch (e) {
-      print('❌ Error checking logs in the background: $e');
+      debugPrint('❌ Error checking logs in the background: $e');
     }
   }
 

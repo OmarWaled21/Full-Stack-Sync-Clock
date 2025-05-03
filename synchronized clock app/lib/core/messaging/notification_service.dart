@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:timezone/data/latest.dart' as tz;
@@ -37,7 +38,7 @@ class NotificationService {
         ?.createNotificationChannel(normalChannel);
 
     var status = await Permission.notification.status;
-    print("🔔 Notification permission status: $status");
+    debugPrint("🔔 Notification permission status: $status");
   }
 
   static Future<void> showNotification({required String title, required String body}) async {

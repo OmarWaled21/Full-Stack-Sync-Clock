@@ -34,7 +34,10 @@ class _AddDevicePageState extends State<AddDevicePage> {
             Card(
               margin: const EdgeInsets.only(bottom: 10),
               child: ListTile(
-                title: Text(context.lang.clockName, style: TextStyle(fontWeight: FontWeight.bold)),
+                title: Text(
+                  context.lang.clockName,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
                 subtitle: CustomTextField(
                   controller: _nameController,
                   hintText: '${context.lang.enter} ${context.lang.clockName}',
@@ -48,7 +51,7 @@ class _AddDevicePageState extends State<AddDevicePage> {
               child: ListTile(
                 title: Text(
                   '${context.lang.max} ${context.lang.temperature}',
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                  style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
                 subtitle: CustomTextField(
                   controller: _maxTempController,
@@ -64,7 +67,7 @@ class _AddDevicePageState extends State<AddDevicePage> {
               child: ListTile(
                 title: Text(
                   '${context.lang.min} ${context.lang.temperature}',
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                  style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
                 subtitle: CustomTextField(
                   controller: _minTempController,
@@ -85,7 +88,7 @@ class _AddDevicePageState extends State<AddDevicePage> {
                     maxTempThreshold: double.parse(_maxTempController.text),
                     minTempThreshold: double.parse(_minTempController.text),
                   );
-                  context.pushAndRemoveUntil(HomePage());
+                  context.pushAndRemoveUntil(const HomePage());
                 },
                 borderColor: AppColors.successColor,
                 text: context.lang.save,

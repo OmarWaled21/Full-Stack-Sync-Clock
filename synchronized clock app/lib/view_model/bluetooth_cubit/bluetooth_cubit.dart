@@ -46,7 +46,7 @@ class BluetoothCubit extends Cubit<BluetoothConfState> {
       await _bluetoothManager.sendWiFiCredentials(ssid, password, token);
       // بعد الإرسال، استقبل device_id
       final deviceId = await _bluetoothManager.listenForDeviceId();
-      print('deviceId: $deviceId');
+      debugPrint('deviceId: $deviceId');
       emit(BluetoothWiFiCredentialsSent(device, deviceId));
     } catch (e) {
       emit(BluetoothError('Failed to send WiFi credentials'));

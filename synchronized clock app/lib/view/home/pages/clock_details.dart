@@ -21,11 +21,11 @@ class ClockDetails extends StatelessWidget {
       appBar: AppBar(
         leading: IconButton(
           onPressed: () => context.pop(),
-          icon: Icon(Icons.arrow_back_ios_new, color: AppColors.greyColor),
+          icon: const Icon(Icons.arrow_back_ios_new, color: AppColors.greyColor),
         ),
         title: Text(
           clock.name ?? 'N/A',
-          style: TextStyle(color: AppColors.whiteColor, fontWeight: FontWeight.bold),
+          style: const TextStyle(color: AppColors.whiteColor, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         backgroundColor: AppColors.backgroundColor,
@@ -34,7 +34,7 @@ class ClockDetails extends StatelessWidget {
             onPressed: () {
               context.push(EditClock(clock: clock));
             },
-            child: Text(context.lang.edit, style: TextStyle(color: AppColors.whiteColor)),
+            child: Text(context.lang.edit, style: const TextStyle(color: AppColors.whiteColor)),
           ),
         ],
       ),
@@ -181,7 +181,7 @@ class ClockDetails extends StatelessWidget {
     return Card(
       margin: EdgeInsets.only(bottom: context.heightPercent(0.015)),
       child: ListTile(
-        title: Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
         subtitle: Text(subtitle),
         leading: Icon(icon, color: iconColor),
       ),
